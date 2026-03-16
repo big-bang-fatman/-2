@@ -1,66 +1,39 @@
 :root {
-    --bg: #0f172a;
-    --card: #1e293b;
-    --accent: #3b82f6;
-    --text: #f1f5f9;
+    --bg: #0f172a; --card: #1e293b; --accent: #3b82f6; --text: #f8fafc;
 }
+body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; }
 
-body {
-    background-color: var(--bg); color: var(--text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; overflow-x: hidden; text-align: center;
-}
-
-.screen { display: none; padding: 20px; min-height: 100vh; }
+.screen { display: none; min-height: 100vh; padding: 20px; box-sizing: border-box; }
 .screen.active { display: block; }
 
-/* الفريقين */
+/* توزيع الهيدر */
 .game-header {
-    display: flex; justify-content: space-between; align-items: center;
-    background: #1e293b; padding: 15px; border-bottom: 2px solid #334155;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    background: var(--card); padding: 20px; border-bottom: 2px solid #334155;
 }
-.team-card { width: 30%; background: #334155; padding: 10px; border-radius: 12px; transition: 0.3s; }
+.team-card { width: 30%; background: #334155; padding: 15px; border-radius: 12px; text-align: center; transition: 0.3s; }
 .team-card.active-turn { border: 3px solid var(--accent); box-shadow: 0 0 15px var(--accent); }
-.score-text { font-size: 2.5rem; font-weight: bold; margin: 5px 0; }
+.score-val { font-size: 2.5rem; font-weight: bold; }
 
-/* المزايا وتأثير الضوء */
-.perks-row { display: flex; gap: 5px; justify-content: center; }
-.perk-btn {
-    background: #475569; border: 2px solid transparent; color: white;
-    padding: 6px; cursor: pointer; border-radius: 5px; font-size: 0.8rem;
-}
-.perk-btn.active-perk { animation: glowEffect 1s infinite; border-color: white; }
-.perk-btn.used { opacity: 0.15; pointer-events: none; filter: grayscale(1); }
+/* المزايا */
+.perks { display: flex; gap: 5px; justify-content: center; margin-top: 10px; }
+.perk { background: #475569; border: 2px solid transparent; color: white; padding: 5px; cursor: pointer; border-radius: 4px; font-size: 0.8rem; }
+.perk.active-p { border-color: white; animation: glow 1s infinite; }
+.perk.used { opacity: 0.2; pointer-events: none; }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 5px var(--accent); } 50% { box-shadow: 0 0 15px var(--accent); } }
 
-@keyframes glowEffect {
-    0%, 100% { box-shadow: 0 0 5px var(--accent); }
-    50% { box-shadow: 0 0 20px var(--accent); }
-}
+/* اللوحة */
+.game-board { display: flex; justify-content: center; gap: 15px; margin-top: 30px; }
+.cat-column { flex: 1; max-width: 180px; display: flex; flex-direction: column; gap: 10px; }
+.cat-name { background: var(--accent); padding: 15px 5px; border-radius: 8px; font-weight: bold; text-align: center; }
+.q-card { background: var(--card); height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; font-size: 1.5rem; border: 1px solid #334155; }
+.q-card.done { opacity: 0.1; pointer-events: none; }
 
-/* لوحة اللعبة */
-.board-container { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-.column { flex: 1; max-width: 180px; }
-.card {
-    background: var(--card); height: 70px; display: flex; align-items: center;
-    justify-content: center; border-radius: 8px; margin-bottom: 10px;
-    font-size: 1.4rem; cursor: pointer; border: 1px solid #334155;
-}
-.card.disabled { opacity: 0.1; pointer-events: none; }
+/* المودال */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 999; }
+.modal-body { background: var(--card); padding: 50px; border-radius: 20px; border: 2px solid var(--accent); text-align: center; width: 80%; max-width: 600px; }
+.hidden-ans { display: none; color: var(--accent); margin-top: 20px; }
 
-/* النوافذ والقوائم */
-.modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-    display: none; align-items: center; justify-content: center; z-index: 1000;
-}
-.modal-content { background: var(--card); padding: 40px; border-radius: 20px; border: 2px solid var(--accent); }
-
-.side-menu {
-    position: fixed; top: 0; right: -280px; width: 250px; height: 100%;
-    background: #1e293b; transition: 0.3s; z-index: 2000; padding: 20px;
-}
-.side-menu.open { right: 0; }
-.menu-item { display: block; width: 100%; padding: 12px; margin: 10px 0; cursor: pointer; }
-
-/* أزرار */
-.btn-main { padding: 15px 30px; background: var(--accent); border: none; color: white; border-radius: 8px; cursor: pointer; font-size: 1.2rem; }
-input { padding: 12px; margin-bottom: 10px; border-radius: 5px; width: 250px; border: 1px solid #334155; background: #0f172a; color: white; }
+/* أزرار عامة */
+.btn-primary { padding: 15px 30px; background: var(--accent); border: none; color: white; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+input { padding: 12px; background: #1e293b; border: 1px solid #334155; color: white; border-radius: 5px; width: 250px; margin: 5px; }
