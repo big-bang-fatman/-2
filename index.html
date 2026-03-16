@@ -3,71 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحدي المعلومات</title>
-    <link rel="stylesheet" href="style.css">
+    <title>تحدي الـ 500</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --accent: #3b82f6;
+            --correct: #10b981; --wrong: #ef4444; --text: #f8fafc;
+        }
+        body {
+            background-color: var(--bg); color: var(--text);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0; padding: 0; overflow-x: hidden;
+        }
+        .hidden { display: none !important; }
+
+        /* الشاشات */
+        .screen {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 100vh; padding: 20px;
+        }
+
+        /* واجهة الفرق */
+        .game-header {
+            display: flex; justify-content: space-between; width: 100%;
+            padding: 20px; box-sizing: border-box; background: #1e293b;
+            position: sticky; top: 0; z-index: 100; border-bottom: 2px solid #334155;
+        }
+        .team-box {
+            background: #334155; padding: 15px; border-radius: 12px;
+            width: 40%; text-align: center; transition: 0.3s;
+        }
+        .team-box.active { border: 3px solid var(--accent); box-shadow: 0 0 20px var(--accent); }
+        .score { font-size: 2.5rem; font-weight: bold; }
+
+        /* المزايا (الخصائص) */
+        .perks { display: flex; gap: 5px; justify-content: center; margin-top: 10px; }
+        .perk-btn {
+            background: #475569; border: 2px solid transparent; color: white;
+            padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;
+        }
+        .perk-btn.active-perk { animation: glow 1s infinite; border-color: white; }
+        .perk-btn.used { opacity: 0.2; pointer-events: none; filter: grayscale(1); }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 5px var(--accent); } 50% { box-shadow: 0 0 15px var(--accent); } }
+
+        /* لوحة اللعبة */
+        .board {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 15px; padding: 20px; width: 100%; max-width: 1200px;
+        }
+        .column { display: flex; flex-direction: column; gap: 10px; }
+        .cat-title {
+            background: var(--accent); padding: 15px 5px; border-radius: 8px;
+            text-align: center; font-weight: bold; font-size: 1.1rem;
+        }
+        .card {
+            background: var(--card); height: 80px; display: flex;
+            align-items: center; justify-content: center; border-radius: 8px;
+            font-size: 1.5rem; cursor: pointer; border: 1px solid #334155;
+        }
+        .card.disabled { opacity: 0.1; pointer-events: none; }
+
+        /* نافذة السؤال (Modal) */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card); padding: 50px; border-radius: 20px;
+            text-align: center; max-width: 600px; width: 90%; border: 2px solid var(--accent);
+        }
+        .ans-btn {
+            padding: 15px 40px; margin: 10px; border-radius: 10px; border: none;
+            cursor: pointer; font-size: 1.2rem; color: white;
+        }
+
+        /* القائمة الجانبية */
+        .side-menu {
+            position: fixed; top: 0; left: -280px; width: 250px; height: 100%;
+            background: #1e293b; transition: 0.3s; z-index: 2000; padding: 20px;
+        }
+        .side-menu.open { left: 0; }
+        
+        /* أزرار عامة */
+        .main-btn {
+            padding: 15px 30px; background: var(--accent); border: none;
+            color: white; border-radius: 8px; cursor: pointer; font-size: 1.2rem;
+        }
+        input { padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; margin-bottom: 10px; width: 250px; }
+    </style>
 </head>
 <body>
 
     <div id="side-menu" class="side-menu">
-        <button class="menu-btn" onclick="restartGame()">إعادة اللعبة</button>
-        <button class="menu-btn" onclick="showInstructions()">التعليمات</button>
-        <button class="menu-btn" onclick="toggleMenu()" style="background:#ef4444">إغلاق</button>
+        <h2>الإعدادات</h2>
+        <button onclick="location.reload()" style="width:100%; padding:15px; margin-bottom:10px;">إعادة اللعبة</button>
+        <button onclick="toggleMenu()" style="width:100%; padding:15px; background:var(--wrong); color:white;">إغلاق</button>
     </div>
 
-    <div class="container">
-        <div id="start-screen" class="screen">
-            <h1>🏆 مسابقة التحدي 🏆</h1>
-            <input type="text" id="name-team1" placeholder="اسم الفريق الأول">
-            <input type="text" id="name-team2" placeholder="اسم الفريق الثاني">
-            <button onclick="startGame()" class="main-btn">بدء المسابقة</button>
-        </div>
+    <div id="screen-start" class="screen">
+        <h1>🏆 تحدي المعلومات 🏆</h1>
+        <input type="text" id="t1-name" placeholder="اسم الفريق الأول">
+        <input type="text" id="t2-name" placeholder="اسم الفريق الثاني">
+        <button class="main-btn" onclick="initGame()">دخول المسابقة</button>
+    </div>
 
-        <div id="category-screen" class="screen hidden">
-            <h2>اختر 5 تصانيف للجولة</h2>
-            <div id="categories-list" class="grid-categories"></div>
-            <button id="confirm-cats-btn" class="main-btn" disabled onclick="startRound()">تأكيد التصانيف</button>
-        </div>
+    <div id="screen-cats" class="screen hidden">
+        <h2>اختر 5 أقسام للجولة</h2>
+        <div id="cats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; width:100%; max-width:800px; margin-bottom:20px;"></div>
+        <button id="btn-start-round" class="main-btn" disabled onclick="confirmCats()">بدء الجولة</button>
+    </div>
 
-        <div id="game-screen" class="screen hidden">
-            <div class="game-header">
-                <div id="team0-area" class="team-card">
-                    <h3 id="display-name0">الفريق 1</h3>
-                    <div id="score0" class="score">0</div>
-                    <div class="perks-row">
-                        <button id="double0" onclick="activatePerk('double')">تدبيل</button>
-                        <button id="wheel0" onclick="activatePerk('wheel')">عجلة</button>
-                        <button id="half0" onclick="activatePerk('half')">نصف</button>
-                    </div>
-                </div>
-
-                <button class="settings-btn" onclick="toggleMenu()">⚙️</button>
-
-                <div id="team1-area" class="team-card">
-                    <h3 id="display-name1">الفريق 2</h3>
-                    <div id="score1" class="score">0</div>
-                    <div class="perks-row">
-                        <button id="double1" onclick="activatePerk('double')">تدبيل</button>
-                        <button id="wheel1" onclick="activatePerk('wheel')">عجلة</button>
-                        <button id="half1" onclick="activatePerk('half')">نصف</button>
-                    </div>
+    <div id="screen-game" class="hidden">
+        <div class="game-header">
+            <div id="team-0" class="team-box">
+                <h3 id="n0">الفريق 1</h3>
+                <div id="s0" class="score">0</div>
+                <div class="perks">
+                    <button id="double0" class="perk-btn" onclick="setPerk('double')">تدبيل</button>
+                    <button id="wheel0" class="perk-btn" onclick="setPerk('wheel')">عجلة</button>
+                    <button id="half0" class="perk-btn" onclick="setPerk('half')">نصف</button>
                 </div>
             </div>
-
-            <div id="board" class="board"></div>
+            <button onclick="toggleMenu()" style="background:none; border:none; font-size:2rem; cursor:pointer;">⚙️</button>
+            <div id="team-1" class="team-box">
+                <h3 id="n1">الفريق 2</h3>
+                <div id="s1" class="score">0</div>
+                <div class="perks">
+                    <button id="double1" class="perk-btn" onclick="setPerk('double')">تدبيل</button>
+                    <button id="wheel1" class="perk-btn" onclick="setPerk('wheel')">عجلة</button>
+                    <button id="half1" class="perk-btn" onclick="setPerk('half')">نصف</button>
+                </div>
+            </div>
         </div>
+        <div id="main-board" class="board"></div>
     </div>
 
-    <div id="modal" class="modal-overlay hidden">
+    <div id="q-modal" class="modal hidden">
         <div class="modal-content">
-            <h2 id="modal-q">السؤال هنا؟</h2>
-            <div id="ans-btns">
-                <button onclick="checkResult(true)" class="ans-btn correct">صح ✅</button>
-                <button onclick="checkResult(false)" class="ans-btn wrong">خطأ ❌</button>
+            <h1 id="q-text">السؤال؟</h1>
+            <div id="modal-controls">
+                <button class="ans-btn" style="background:var(--correct)" onclick="finishQ(true)">صح ✅</button>
+                <button class="ans-btn" style="background:var(--wrong)" onclick="finishQ(false)">خطأ ❌</button>
             </div>
-            <h3 id="modal-a" class="hidden">الإجابة: ...</h3>
+            <h2 id="a-text" class="hidden" style="color:var(--accent)"></h2>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        const bank = {
+            "قرآن": [{q:"أطول سورة؟",a:"البقرة",v:100},{q:"سورة فيها بسملتين؟",a:"النمل",v:200},{q:"أطول آية؟",a:"الدين",v:300},{q:"صحابي ذكر اسمه؟",a:"زيد",v:400},{q:"أخت الطويلتين؟",a:"الأعراف",v:500}],
+            "تاريخ": [{q:"أول خليفة؟",a:"أبو بكر",v:100},{q:"فتح مكة؟",a:"8 هـ",v:200},{q:"الثورة الفرنسية؟",a:"1789",v:300},{q:"توحيد المملكة؟",a:"1351",v:400},{q:"عاصمة العباسيين الأولى؟",a:"الكوفة",v:500}],
+            "فلك": [{q:"أكبر كوكب؟",a:"المشتري",v:100},{q:"كوكب أحمر؟",a:"المريخ",v:200},{q:"وحدة المسافات؟",a:"السنة الضوئية",v:300},{q:"أول بشري بالفضاء؟",a:"يوري",v:400},{q:"مذنب 76 عام؟",a:"هالي",v:500}],
+            "علوم": [{q:"رمز الماء؟",a:"H2O",v:100},{q:"أصلب مادة؟",a:"الألماس",v:200},{q:"عظام البالغ؟",a:"206",v:300},{q:"غاز التنفس؟",a:"أكسجين",v:400},{q:"المعطي العام؟",a:"O-",v:500}],
+            "حيوانات": [{q:"أسرع حيوان؟",a:"الفهد",v:100},{q:"يغير لونه؟",a:"الحرباء",v:200},{q:"أطول رقبة؟",a:"الزرافة",v:300},{q:"أصغر طائر؟",a:"الطنان",v:400},{q:"أقوى عضة؟",a:"التمساح",v:500}],
+            "جغرافيا": [{q:"أكبر قارة؟",a:"آسيا",v:100},{q:"أطول نهر؟",a:"النيل",v:200},{q:"عاصمة اليابان؟",a:"طوكيو",v:300},{q:"مضيق هرمز يربط؟",a:"عمان بالخليج",v:400},{q:"أكبر جزيرة؟",a:"جرينلاند",v:500}],
+            "رياضة": [{q:"لاعبين القدم؟",a:"11",v:100},{q:"أول كأس عالم؟",a:"الأوروغواي",v:200},{q:"مسافة الماراثون؟",a:"42",v:300},{q:"لقب ميسي؟",a:"البرغوث",v:400},{q:"حلقات الأولمبياد؟",a:"5",v:500}],
+            "أدب": [{q:"شاعر الرسول؟",a:"حسان",v:100},{q:"أمير الشعراء؟",a:"أحمد شوقي",v:200},{q:"كاتب البؤساء؟",a:"فيكتور",v:300},{q:"اسم المتنبي؟",a:"أحمد",v:400},{q:"كتاب الحيوان؟",a:"الجاحظ",v:500}],
+            "اختراعات": [{q:"المصباح؟",a:"إديسون",v:100},{q:"الهاتف؟",a:"بيل",v:200},{q:"الطائرة؟",a:"الرايت",v:300},{q:"الراديو؟",a:"ماركوني",v:400},{q:"محرك بخاري؟",a:"واط",v:500}],
+            "عامة": [{q:"لون الزمرد؟",a:"أخضر",v:100},{q:"صوت الأسد؟",a:"زئير",v:200},{q:"عملة بريطانيا؟",a:"جنيه",v:300},{q:"أقرب كوكب؟",a:"الزهرة",v:400},{q:"أكبر محيط؟",a:"الهادي",v:500}]
+        };
+
+        let scores = [0, 0], turn = 0, usedCats = [], currentRoundCats = [];
+        let perks = [ {double:true,wheel:true,half:true}, {double:true,wheel:true,half:true} ];
+        let activePerk = null, activeV = 0, activeCard = null, qCount = 0, delCount = 0;
+
+        // نظام الصوت (Beep)
+        function snd(f) {
+            const c = new (window.AudioContext || window.webkitAudioContext)();
+            const o = c.createOscillator(), g = c.createGain();
+            o.connect(g); g.connect(c.destination); o.frequency.value = f;
+            o.start(); g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.5); o.stop(c.currentTime + 0.5);
+        }
+
+        function initGame() {
+            document.getElementById('n0').innerText = document.getElementById('t1-name').value || "الفريق 1";
+            document.getElementById('n1').innerText = document.getElementById('t2-name').value || "الفريق 2";
+            snd(440); showCats();
+        }
+
+        function showCats() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-cats').classList.remove('hidden');
+            const grid = document.getElementById('cats-grid'); grid.innerHTML = ''; currentRoundCats = [];
+            Object.keys(bank).forEach(cat => {
+                const played = usedCats.includes(cat);
+                const d = document.createElement('div'); d.className = 'cat-title ' + (played?'used':'');
+                d.style.background = played ? '#000' : '#1e293b'; d.innerText = cat;
+                if(!played) d.onclick = () => {
+                    if(currentRoundCats.includes(cat)) { currentRoundCats = currentRoundCats.filter(c=>c!==cat); d.style.background='#1e293b'; }
+                    else if(currentRoundCats.length < 5) { currentRoundCats.push(cat); d.style.background='#3b82f6'; }
+                    document.getElementById('btn-start-round').disabled = currentRoundCats.length !== 5;
+                };
+                grid.appendChild(d);
+            });
+        }
+
+        function confirmCats() {
+            usedCats.push(...currentRoundCats); qCount = 25;
+            if(usedCats.length > 5) delCount = 3;
+            document.getElementById('screen-cats').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            renderBoard(); updateUI();
+        }
+
+        function renderBoard() {
+            const b = document.getElementById('main-board'); b.innerHTML = '';
+            currentRoundCats.forEach(cat => {
+                const col = document.createElement('div'); col.className = 'column';
+                col.innerHTML = `<div class="cat-title">${cat}</div>`;
+                [100,200,300,400,500].forEach(v => {
+                    const card = document.createElement('div'); card.className = 'card'; card.innerText = v;
+                    if(v === 500 && delCount > 0) { card.className = 'card disabled'; card.innerText = '🗑️'; delCount--; qCount--; }
+                    else card.onclick = () => { activeCard=card; activeV=v; openQ(cat, v); };
+                    col.appendChild(card);
+                });
+                b.appendChild(col);
+            });
+        }
+
+        function openQ(cat, v) {
+            snd(523); const q = bank[cat].find(x => x.v === v);
+            document.getElementById('q-text').innerText = q.q;
+            document.getElementById('a-text').innerText = "الإجابة: " + q.a;
+            document.getElementById('a-text').classList.add('hidden');
+            document.getElementById('modal-controls').classList.remove('hidden');
+            document.getElementById('q-modal').classList.remove('hidden');
+        }
+
+        function setPerk(p) {
+            if(!perks[turn][p]) return; activePerk = p;
+            document.querySelectorAll('.perk-btn').forEach(b => b.classList.remove('active-perk'));
+            document.getElementById(p + turn).classList.add('active-perk');
+        }
+
+        function finishQ(correct) {
+            let finalV = activeV;
+            if(activePerk === 'double') finalV *= 2;
+            if(activePerk === 'half') finalV *= 0.5;
+            if(activePerk === 'wheel') finalV = Math.random() > 0.5 ? finalV * 2 : 0;
+            
+            if(correct) { scores[turn] += finalV; snd(880); } else { scores[turn] -= finalV; snd(220); }
+            
+            if(activePerk) {
+                const b = document.getElementById(activePerk + turn); b.classList.add('used');
+                perks[turn][activePerk] = false; activePerk = null;
+            }
+            document.getElementById('modal-controls').classList.add('hidden');
+            document.getElementById('a-text').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('q-modal').classList.add('hidden');
+                activeCard.classList.add('disabled'); qCount--;
+                if(qCount <= 0) { alert("انتهت الجولة!"); showCats(); }
+                else { turn = turn === 0 ? 1 : 0; updateUI(); }
+            }, 2000);
+        }
+
+        function updateUI() {
+            document.getElementById('s0').innerText = scores[0];
+            document.getElementById('s1').innerText = scores[1];
+            document.getElementById('team-0').className = 'team-box ' + (turn === 0 ? 'active' : '');
+            document.getElementById('team-1').className = 'team-box ' + (turn === 1 ? 'active' : '');
+        }
+        function toggleMenu() { document.getElementById('side-menu').classList.toggle('open'); }
+    </script>
 </body>
 </html>
