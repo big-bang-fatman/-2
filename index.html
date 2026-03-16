@@ -2,71 +2,64 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحدي الـ 500</title>
+    <title>مسابقة المعلومات</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="side-menu" class="side-menu">
-        <h3>الإعدادات</h3>
-        <button class="menu-item" onclick="location.reload()">إعادة اللعبة</button>
-        <button class="menu-item" onclick="location.reload()">القائمة الرئيسية</button>
-        <button class="menu-item" onclick="showInstructions()">التعليمات</button>
-        <button class="menu-item close-btn" onclick="toggleMenu()">إغلاق</button>
-    </div>
-
-    <div id="screen-names" class="screen active">
-        <div class="start-card">
-            <h1>🏆 مسابقة التحدي 🏆</h1>
-            <input type="text" id="t1-input" placeholder="اسم الفريق الأول">
-            <input type="text" id="t2-input" placeholder="اسم الفريق الثاني">
-            <button class="btn-main" onclick="startToCats()">دخول المسابقة</button>
+    <div id="screen-setup" class="screen active">
+        <div class="card-ui">
+            <h1>🏆 مسابقة التحدي </h1>
+            <input type="text" id="name1" placeholder="اسم الفريق الأول">
+            <input type="text" id="name2" placeholder="اسم الفريق الثاني">
+            <button class="btn-primary" onclick="showCats()">دخول المسابقة</button>
         </div>
     </div>
 
     <div id="screen-cats" class="screen">
-        <h2>اختر 5 تصانيف للجولة</h2>
-        <div id="cats-list" class="cats-grid"></div>
-        <button id="btn-confirm-cats" class="btn-main" disabled onclick="confirmAndPlay()">بدء الجولة</button>
+        <div class="card-ui">
+            <h2>اختر 5 أقسام للجولة</h2>
+            <div id="cats-list" class="cats-grid"></div>
+            <button id="start-round-btn" class="btn-primary" disabled onclick="startGame()">تأكيد وبدء اللعب</button>
+        </div>
     </div>
 
     <div id="screen-game" class="screen">
-        <div class="game-header">
-            <div id="team-box-0" class="team-card">
-                <h3 id="name-0">الفريق 1</h3>
-                <div id="score-0" class="score-text">0</div>
-                <div class="perks-row">
-                    <button id="double0" class="perk-btn" onclick="activatePerk('double')">تدبيل</button>
-                    <button id="wheel0" class="perk-btn" onclick="activatePerk('wheel')">عجلة</button>
-                    <button id="half0" class="perk-btn" onclick="activatePerk('half')">نصف</button>
+        <header class="game-header">
+            <div id="team1-box" class="team-card">
+                <h3 id="display-n1">فريق 1</h3>
+                <div id="score1" class="score-val">0</div>
+                <div class="perks">
+                    <button id="double1" class="perk" onclick="usePerk('double')">تدبيل</button>
+                    <button id="wheel1" class="perk" onclick="usePerk('wheel')">عجلة</button>
+                    <button id="half1" class="perk" onclick="usePerk('half')">نصف</button>
                 </div>
             </div>
 
-            <button class="settings-trigger" onclick="toggleMenu()">⚙️</button>
+            <button class="settings-btn" onclick="toggleMenu()">⚙️</button>
 
-            <div id="team-box-1" class="team-card">
-                <h3 id="name-1">الفريق 2</h3>
-                <div id="score-1" class="score-text">0</div>
-                <div class="perks-row">
-                    <button id="double1" class="perk-btn" onclick="activatePerk('double')">تدبيل</button>
-                    <button id="wheel1" class="perk-btn" onclick="activatePerk('wheel')">عجلة</button>
-                    <button id="half1" class="perk-btn" onclick="activatePerk('half')">نصف</button>
+            <div id="team2-box" class="team-card">
+                <h3 id="display-n2">فريق 2</h3>
+                <div id="score2" class="score-val">0</div>
+                <div class="perks">
+                    <button id="double2" class="perk" onclick="usePerk('double')">تدبيل</button>
+                    <button id="wheel2" class="perk" onclick="usePerk('wheel')">عجلة</button>
+                    <button id="half2" class="perk" onclick="usePerk('half')">نصف</button>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <div id="game-board" class="board-container"></div>
+        <main id="board" class="game-board"></main>
     </div>
 
     <div id="q-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h1 id="q-display">السؤال؟</h1>
-            <div id="ans-controls">
-                <button class="ans-btn correct" onclick="handleAnswer(true)">صح ✅</button>
-                <button class="ans-btn wrong" onclick="handleAnswer(false)">خطأ ❌</button>
+        <div class="modal-body">
+            <h1 id="q-text"></h1>
+            <div id="ans-btns">
+                <button class="btn-ans correct" onclick="submitAns(true)">صح ✅</button>
+                <button class="btn-ans wrong" onclick="submitAns(false)">خطأ ❌</button>
             </div>
-            <h2 id="a-display" class="answer-text"></h2>
+            <h2 id="a-text" class="hidden-ans"></h2>
         </div>
     </div>
 
