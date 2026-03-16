@@ -9,90 +9,79 @@
 body {
     background-color: #0f172a;
     color: var(--text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Cairo', sans-serif;
     margin: 0;
     direction: rtl;
 }
 
-.container { text-align: center; padding: 40px 20px; }
+.container { text-align: center; padding: 20px; }
 .hidden { display: none !important; }
 
-/* تحسين شاشة اختيار الأقسام لتظهر كشبكة */
-.categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    max-width: 800px;
-    margin: 30px auto;
-    padding: 20px;
-    background: #1e293b;
-    border-radius: 15px;
+/* تأثير الضوء المتحرك للمزايا */
+@keyframes borderGlow {
+    0% { box-shadow: 0 0 5px #3b82f6; border-color: #3b82f6; }
+    50% { box-shadow: 0 0 20px #3b82f6; border-color: #60a5fa; }
+    100% { box-shadow: 0 0 5px #3b82f6; border-color: #3b82f6; }
 }
 
-.category-item {
-    background: #334155;
-    padding: 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: 0.3s;
-}
-
-.category-item.selected {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: white;
-}
-
-.category-item.played {
-    opacity: 0.4;
-    cursor: not-allowed;
-    background: #000;
-    text-decoration: line-through;
-}
-
-/* زر التأكيد */
-.btn-start {
-    background: var(--correct);
-    color: white;
-    padding: 15px 50px;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-.btn-start:disabled {
-    background: #475569;
-    cursor: not-allowed;
-}
-
-/* لوحة اللعبة */
-.game-board {
+.perks-container {
     display: flex;
     justify-content: center;
     gap: 10px;
-    padding: 20px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    margin-top: 10px;
 }
 
-.card {
-    background: #1e293b;
-    width: 100%;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    border-radius: 8px;
-    margin-bottom: 10px;
+.perk-btn {
+    padding: 8px 15px;
+    background: #334155;
+    border: 2px solid transparent;
+    color: white;
     cursor: pointer;
-    border: 1px solid #334155;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: 0.3s;
 }
 
-.card.disabled {
+.perk-btn.active-perk {
+    animation: borderGlow 1s infinite;
+}
+
+.perk-btn.used {
     opacity: 0.2;
+    filter: grayscale(1);
     cursor: not-allowed;
 }
+
+/* القائمة الجانبية */
+.side-menu {
+    position: fixed; top: 0; left: -260px; width: 250px; height: 100%;
+    background: #1e293b; transition: 0.3s; z-index: 2000; padding: 20px;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+}
+.side-menu.active { left: 0; }
+.menu-item {
+    display: block; width: 100%; padding: 15px; margin-bottom: 10px;
+    background: #334155; border: none; color: white; cursor: pointer;
+    text-align: right; border-radius: 5px; font-size: 1.1rem;
+}
+
+/* شبكة اختيار الأقسام */
+.categories-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px; max-width: 900px; margin: 20px auto;
+}
+.category-item {
+    background: #1e293b; padding: 20px; border-radius: 10px; cursor: pointer;
+    border: 2px solid #334155; transition: 0.3s;
+}
+.category-item.selected { border-color: var(--accent); background: #334155; }
+.category-item.played { opacity: 0.3; cursor: not-allowed; background: #000; }
+
+/* لوحة اللعبة */
+.game-board { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+.card {
+    background: #1e293b; height: 60px; display: flex; align-items: center;
+    justify-content: center; border-radius: 5px; margin-bottom: 8px;
+    cursor: pointer; border: 1px solid #334155; font-weight: bold;
+}
+.card.disabled { opacity: 0.2; cursor: not-allowed; }
