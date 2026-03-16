@@ -3,90 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جاوب مع راشد</title>
+    <title>تحدي المعلومات</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="side-menu" class="side-menu">
-        <button class="close-btn" onclick="toggleMenu()">×</button>
-        <ul>
-            <li onclick="location.reload()">إعادة ضبط المسابقة 🔄</li>
-            <li onclick="showCategorySelection()">الجولة الثانية ⏩</li>
-        </ul>
+        <button class="menu-btn" onclick="restartGame()">إعادة اللعبة</button>
+        <button class="menu-btn" onclick="showInstructions()">التعليمات</button>
+        <button class="menu-btn" onclick="toggleMenu()" style="background:#ef4444">إغلاق</button>
     </div>
 
-    <button class="menu-trigger" onclick="toggleMenu()">☰ الإعدادات</button>
-
-    <div id="start-screen" class="container">
-        <h1>🏆 مسابقة التحدي 🏆</h1>
-        <div class="setup-box">
-            <input type="text" id="name-team1" placeholder="اسم الفريق الأول" class="name-input">
-            <input type="text" id="name-team2" placeholder="اسم الفريق الثاني" class="name-input">
-            <button class="btn-start" onclick="saveNamesAndStart()">ابدأ المسابقة</button>
-        </div>
-    </div>
-
-    <div id="category-selection-screen" class="container hidden">
-        <h2>اختر 5 أقسام للجولة</h2>
-        
-        <div id="delete-perk-area" class="hidden delete-box">
-            <p id="winner-msg"></p>
-            <button id="btn-apply-delete" class="perk-btn-del" onclick="applyDeletePerk()">تفعيل حذف 3 أسئلة (500) 🗑️</button>
+    <div class="container">
+        <div id="start-screen" class="screen">
+            <h1>🏆 مسابقة التحدي 🏆</h1>
+            <input type="text" id="name-team1" placeholder="اسم الفريق الأول">
+            <input type="text" id="name-team2" placeholder="اسم الفريق الثاني">
+            <button onclick="startGame()" class="main-btn">بدء المسابقة</button>
         </div>
 
-        <div id="categories-list" class="categories-grid"></div>
-        <p class="counter-text">الأقسام المختارة: <span id="selected-count">0</span> / 5</p>
-        <button id="start-round-btn" class="btn-start" onclick="confirmCategories()" disabled>تأكيد ودخول الميدان</button>
-    </div>
+        <div id="category-screen" class="screen hidden">
+            <h2>اختر 5 تصانيف للجولة</h2>
+            <div id="categories-list" class="grid-categories"></div>
+            <button id="confirm-cats-btn" class="main-btn" disabled onclick="startRound()">تأكيد التصانيف</button>
+        </div>
 
-    <div id="main-game" class="hidden">
-        <div class="scoreboard">
-            <div id="team1-box" class="team-box active">
-                <h2 id="display-name1">الفريق 1</h2>
-                <div class="score-controls">
-                    <button class="adjust-btn" onclick="manualAdjust(0, -100)">-</button>
-                    <span id="score1" class="score">0</span>
-                    <button class="adjust-btn" onclick="manualAdjust(0, 100)">+</button>
+        <div id="game-screen" class="screen hidden">
+            <div class="game-header">
+                <div id="team0-area" class="team-card">
+                    <h3 id="display-name0">الفريق 1</h3>
+                    <div id="score0" class="score">0</div>
+                    <div class="perks-row">
+                        <button id="double0" onclick="activatePerk('double')">تدبيل</button>
+                        <button id="wheel0" onclick="activatePerk('wheel')">عجلة</button>
+                        <button id="half0" onclick="activatePerk('half')">نصف</button>
+                    </div>
                 </div>
-                <div class="perks">
-                    <button id="mute-p1" class="perk-btn" onclick="usePerk('mute', 0)">تسكيت 🔇</button>
+
+                <button class="settings-btn" onclick="toggleMenu()">⚙️</button>
+
+                <div id="team1-area" class="team-card">
+                    <h3 id="display-name1">الفريق 2</h3>
+                    <div id="score1" class="score">0</div>
+                    <div class="perks-row">
+                        <button id="double1" onclick="activatePerk('double')">تدبيل</button>
+                        <button id="wheel1" onclick="activatePerk('wheel')">عجلة</button>
+                        <button id="half1" onclick="activatePerk('half')">نصف</button>
+                    </div>
                 </div>
             </div>
 
-            <div id="team2-box" class="team-box">
-                <h2 id="display-name2">الفريق 2</h2>
-                <div class="score-controls">
-                    <button class="adjust-btn" onclick="manualAdjust(1, -100)">-</button>
-                    <span id="score2" class="score">0</span>
-                    <button class="adjust-btn" onclick="manualAdjust(1, 100)">+</button>
-                </div>
-                <div class="perks">
-                    <button id="mute-p2" class="perk-btn" onclick="usePerk('mute', 1)">تسكيت 🔇</button>
-                </div>
-            </div>
+            <div id="board" class="board"></div>
         </div>
-
-        <div id="game-board" class="game-board"></div>
     </div>
 
-    <div id="question-modal" class="modal hidden">
+    <div id="modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 id="modal-genre"></h3>
-            <p id="modal-question-text" class="question-text"></p>
-            
-            <div id="decision-section" class="btn-group">
-                <button class="btn-correct" onclick="handleResult(true)">إجابة صحيحة ✅</button>
-                <button class="btn-wrong" onclick="handleResult(false)">إجابة خاطئة ❌</button>
+            <h2 id="modal-q">السؤال هنا؟</h2>
+            <div id="ans-btns">
+                <button onclick="checkResult(true)" class="ans-btn correct">صح ✅</button>
+                <button onclick="checkResult(false)" class="ans-btn wrong">خطأ ❌</button>
             </div>
-
-            <div id="steal-section" class="btn-group hidden">
-                <p>هل يرغب الفريق الآخر في سرقة السؤال؟</p>
-                <button class="btn-steal" onclick="handleSteal(true)">نعم، سرقة ⚡</button>
-                <button class="btn-no-steal" onclick="handleSteal(false)">لا، إظهار الإجابة 👁️</button>
-            </div>
-
-            <div id="modal-answer" class="answer-box hidden"></div>
+            <h3 id="modal-a" class="hidden">الإجابة: ...</h3>
         </div>
     </div>
 
