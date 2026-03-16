@@ -1,147 +1,45 @@
-:root {
-    --primary: #0f172a;
-    --accent: #3b82f6;
-    --correct: #10b981;
-    --wrong: #ef4444;
-    --card-bg: #1e293b;
-    --text: #f8fafc;
-}
-
 body {
-    background-color: var(--primary);
-    color: var(--text);
-    font-family: 'Cairo', sans-serif;
-    margin: 0;
-    direction: rtl;
-    overflow-x: hidden;
+    background: #0f172a; color: white; font-family: sans-serif; margin: 0; text-align: center;
 }
+.hidden { display: none !important; }
 
-/* توزيع الفريقين في الأعلى */
-.header-scores {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 20px 5%;
-    background: rgba(30, 41, 59, 0.5);
-    border-bottom: 2px solid #334155;
+/* توزيع الفرق */
+.game-header {
+    display: flex; justify-content: space-around; align-items: center; padding: 20px; background: #1e293b;
 }
-
-.team-box {
-    width: 250px;
-    padding: 15px;
-    border-radius: 12px;
-    background: var(--card-bg);
-    text-align: center;
-    transition: 0.3s;
+.team-card {
+    background: #334155; padding: 15px; border-radius: 10px; width: 220px; transition: 0.3s;
 }
+.team-card.active { border: 3px solid #3b82f6; box-shadow: 0 0 15px #3b82f6; }
+.score { font-size: 2rem; font-weight: bold; }
 
-.team-box.active {
-    border: 2px solid var(--accent);
-    box-shadow: 0 0 15px var(--accent);
+/* المزايا */
+.perks-row button {
+    margin: 2px; padding: 5px; font-size: 0.7rem; cursor: pointer; background: #475569; border: 2px solid transparent; color: white;
 }
-
-.score-val { font-size: 2.5rem; font-weight: bold; margin: 5px 0; }
-
-/* المزايا وتأثير الضوء */
-.perks-grid {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-.perk-btn {
-    flex: 1;
-    padding: 8px 5px;
-    font-size: 0.8rem;
-    background: #334155;
-    border: 2px solid transparent;
-    color: white;
-    cursor: pointer;
-    border-radius: 6px;
-}
-
-@keyframes borderGlow {
-    0%, 100% { box-shadow: 0 0 5px var(--accent); border-color: var(--accent); }
-    50% { box-shadow: 0 0 20px var(--accent); border-color: #60a5fa; }
-}
-
-.perk-btn.active-perk { animation: borderGlow 1s infinite; }
-.perk-btn.used { opacity: 0.2; filter: grayscale(1); cursor: not-allowed; }
+.perks-row button.active-perk { animation: glow 1s infinite; border-color: #3b82f6; }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 5px #3b82f6; } 50% { box-shadow: 0 0 20px #3b82f6; } }
+.perks-row button.used { opacity: 0.2; pointer-events: none; }
 
 /* لوحة اللعبة */
-.game-container { padding: 20px; }
-.game-board {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.genre-column { flex: 1; max-width: 180px; }
-.genre-title {
-    background: var(--accent);
-    padding: 15px 5px;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
+.board { display: flex; justify-content: center; gap: 10px; padding: 20px; }
 .card {
-    background: var(--card-bg);
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    border-radius: 10px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    border: 1px solid #334155;
-    transition: 0.2s;
+    background: #1e293b; border: 1px solid #475569; margin-bottom: 5px; padding: 20px;
+    cursor: pointer; font-size: 1.2rem; border-radius: 5px;
 }
-
-.card:hover:not(.disabled) { background: #334155; transform: scale(1.05); }
-.card.disabled { opacity: 0.15; cursor: not-allowed; }
-
-/* نافذة السؤال (Modal) */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9);
-    display: none; align-items: center; justify-content: center; z-index: 9999;
-}
-
-.modal-content {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 700px;
-    text-align: center;
-    border: 1px solid var(--accent);
-}
-
-.btn-ans {
-    padding: 15px 40px;
-    margin: 10px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: white;
-}
-
-.btn-correct { background: var(--correct); }
-.btn-wrong { background: var(--wrong); }
+.card.disabled { opacity: 0.1; pointer-events: none; }
 
 /* القائمة الجانبية */
 .side-menu {
-    position: fixed; top: 0; left: -280px; width: 260px; height: 100%;
-    background: #1e293b; transition: 0.4s; z-index: 10000; padding: 20px;
+    position: fixed; top: 0; left: -250px; width: 250px; height: 100%;
+    background: #1e293b; transition: 0.3s; z-index: 1000; padding: 20px;
 }
 .side-menu.active { left: 0; }
-.menu-btn {
-    width: 100%; padding: 15px; margin-bottom: 10px;
-    background: #334155; border: none; color: white; cursor: pointer; text-align: right;
+.menu-btn { display: block; width: 100%; margin: 10px 0; padding: 10px; cursor: pointer; }
+
+/* نافذة السؤال */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+    display: flex; align-items: center; justify-content: center; z-index: 2000;
 }
+.modal-content { background: #1e293b; padding: 40px; border-radius: 20px; border: 2px solid #3b82f6; }
