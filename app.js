@@ -1,4 +1,4 @@
-// 1. بنك الأسئلة (10 أقسام - سؤال واحد لكل قيمة)
+// 1. بنك الأسئلة الكامل (10 أقسام)
 const questionsBank = {
     "قرآن": [
         { q: "ما هي أطول سورة في القرآن الكريم؟", a: "سورة البقرة", v: 100 },
@@ -40,7 +40,7 @@ const questionsBank = {
         { q: "ما هو أطول نهر في العالم؟", a: "نهر النيل", v: 200 },
         { q: "ما هي عاصمة اليابان؟", a: "طوكيو", v: 300 },
         { q: "أين يقع مضيق هرمز؟", a: "بين الخليج العربي وخليج عمان", v: 400 },
-        { q: "ما هي الدولة التي تملك أكبر عدد سكان؟", a: "الهند (حالياً)", v: 500 }
+        { q: "ما هي الدولة التي تملك أكبر عدد سكان؟", a: "الهند", v: 500 }
     ],
     "رياضة": [
         { q: "كم عدد لاعبي فريق كرة القدم؟", a: "11 لاعب", v: 100 },
@@ -63,7 +63,7 @@ const questionsBank = {
         { q: "من هو مخترع الراديو؟", a: "ماركوني", v: 400 },
         { q: "من هو مخترع المحرك البخاري؟", a: "جيمس واط", v: 500 }
     ],
-    "معلومات عامة": [
+    "عامة": [
         { q: "ما هو لون الزمرد؟", a: "أخضر", v: 100 },
         { q: "ما هو صوت الأسد؟", a: "زئير", v: 200 },
         { q: "ما هي العملة الرسمية في بريطانيا؟", a: "الجنيه الإسترليني", v: 300 },
@@ -72,17 +72,33 @@ const questionsBank = {
     ]
 };
 
-// 2. نظام الصوت
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playSnd(type) {
+// 2. إصلاح نظام الصوت وتفعيله مع أول نقرة
+let audioCtx;
+function initAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playSnd(type) {
+    initAudio();
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain); gain.connect(audioCtx.destination);
-    if (type==='correct') { osc.frequency.setValueAtTime(523, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime+0.2); }
-    else if (type==='wrong') { osc.type='sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); }
-    else if (type==='open') { osc.type='triangle'; osc.frequency.setValueAtTime(440, audioCtx.currentTime); }
-    gain.gain.setValueAtTime(0.05, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime+0.2);
+    
+    if (type==='correct') {
+        osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime+0.2);
+    } else if (type==='wrong') {
+        osc.type='sawtooth';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    } else if (type==='open') {
+        osc.type='triangle';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+    }
+    
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    osc.start();
+    osc.stop(audioCtx.currentTime+0.2);
 }
 
 // 3. الحالة والمنطق
@@ -92,12 +108,14 @@ let usedCategories = [];
 let perks = { mute: [true, true] };
 let activeCard, activeVal, activeGenre, isStolenMode = false;
 let deletedCount = 0;
+let tempSelected = [];
 
 function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
 
 function saveNamesAndStart() {
-    const n1 = document.getElementById('name-team1').value || "الفريق الأول";
-    const n2 = document.getElementById('name-team2').value || "الفريق الثاني";
+    initAudio(); // تفعيل الصوت عند أول ضغطة
+    const n1 = document.getElementById('name-team1').value || "الفريق 1";
+    const n2 = document.getElementById('name-team2').value || "الفريق 2";
     document.getElementById('display-name1').innerText = n1;
     document.getElementById('display-name2').innerText = n2;
     showCategorySelection();
@@ -108,7 +126,6 @@ function showCategorySelection() {
     document.getElementById('main-game').classList.add('hidden');
     document.getElementById('category-selection-screen').classList.remove('hidden');
     
-    // ميزة الحذف تظهر فقط إذا كانت هناك جولة سابقة
     if (usedCategories.length > 0) {
         document.getElementById('delete-perk-area').classList.remove('hidden');
         const winner = scores[0] >= scores[1] ? document.getElementById('display-name1').innerText : document.getElementById('display-name2').innerText;
@@ -118,8 +135,11 @@ function showCategorySelection() {
 
     const list = document.getElementById('categories-list');
     list.innerHTML = '';
-    let selected = [];
-    
+    tempSelected = [];
+    document.getElementById('selected-count').innerText = "0";
+    document.getElementById('start-round-btn').disabled = true;
+
+    // عرض جميع التصنيفات (10 تصنيفات)
     Object.keys(questionsBank).forEach(cat => {
         const played = usedCategories.includes(cat);
         const div = document.createElement('div');
@@ -128,30 +148,29 @@ function showCategorySelection() {
         
         if (!played) {
             div.onclick = () => {
-                if(selected.includes(cat)) {
-                    selected = selected.filter(c => c!==cat);
+                if(tempSelected.includes(cat)) {
+                    tempSelected = tempSelected.filter(c => c!==cat);
                     div.classList.remove('selected');
-                } else if(selected.length < 5) {
-                    selected.push(cat);
+                } else if(tempSelected.length < 5) {
+                    tempSelected.push(cat);
                     div.classList.add('selected');
                 }
-                document.getElementById('selected-count').innerText = selected.length;
-                document.getElementById('start-round-btn').disabled = selected.length !== 5;
+                document.getElementById('selected-count').innerText = tempSelected.length;
+                document.getElementById('start-round-btn').disabled = tempSelected.length !== 5;
             };
         }
         list.appendChild(div);
     });
-    window.tempSelected = selected;
 }
 
 function applyDeletePerk() {
     deletedCount = 3;
-    alert("سيتم حذف 3 أسئلة من فئة 500 في هذه الجولة!");
+    alert("تم تفعيل ميزة الحذف لهذه الجولة!");
     document.getElementById('btn-apply-delete').disabled = true;
 }
 
 function confirmCategories() {
-    usedCategories.push(...window.tempSelected);
+    usedCategories.push(...tempSelected);
     document.getElementById('category-selection-screen').classList.add('hidden');
     document.getElementById('main-game').classList.remove('hidden');
     renderBoard();
@@ -160,7 +179,8 @@ function confirmCategories() {
 function renderBoard() {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
-    window.tempSelected.forEach(cat => {
+    // عرض الأقسام الخمسة المختارة للجولة الحالية فقط
+    tempSelected.forEach(cat => {
         const col = document.createElement('div');
         col.className = 'genre-column';
         col.innerHTML = `<div class="genre-title">${cat}</div>`;
@@ -169,7 +189,6 @@ function renderBoard() {
             card.className = 'card';
             card.innerText = v;
             
-            // تطبيق حذف الأسئلة للمتصدر
             if (v === 500 && deletedCount > 0 && Math.random() > 0.4) {
                 card.classList.add('disabled');
                 card.innerText = "🗑️";
@@ -190,7 +209,6 @@ function openQuestion(cat, v, card) {
     let q = questionsBank[cat].find(x => x.v === v);
     document.getElementById('modal-question-text').innerText = q.q;
     document.getElementById('modal-answer').innerText = q.a;
-    
     document.getElementById('modal-answer').classList.add('hidden');
     document.getElementById('decision-section').classList.remove('hidden');
     document.getElementById('steal-section').classList.add('hidden');
@@ -230,15 +248,11 @@ function handleSteal(wants) {
     }
 }
 
-function manualAdjust(team, amt) {
-    scores[team] += amt;
-    updateUI();
-}
+function manualAdjust(team, amt) { scores[team] += amt; updateUI(); }
 
 function usePerk(type, team) {
     if (type==='mute' && perks.mute[team]) {
-        alert("تم تفعيل ميزة التسكيت!");
-        perks.mute[team] = false;
+        alert("تسكيت!"); perks.mute[team] = false;
         document.getElementById(`mute-p${team+1}`).classList.add('disabled');
         document.getElementById(`mute-p${team+1}`).disabled = true;
     }
