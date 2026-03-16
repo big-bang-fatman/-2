@@ -11,52 +11,88 @@ body {
     color: var(--text);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    overflow-x: hidden;
+    direction: rtl;
 }
 
-.container { text-align: center; padding: 50px 20px; }
+.container { text-align: center; padding: 40px 20px; }
 .hidden { display: none !important; }
 
-/* شاشة البداية */
-.setup-box { background: #1e293b; padding: 30px; border-radius: 15px; display: inline-block; }
-.name-input { padding: 12px; margin: 10px; border-radius: 8px; border: 2px solid #334155; background: #0f172a; color: white; width: 250px; text-align: center; }
+/* تحسين شاشة اختيار الأقسام لتظهر كشبكة */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #1e293b;
+    border-radius: 15px;
+}
 
-/* لوحة النقاط */
-.scoreboard { display: flex; justify-content: space-around; background: #1e293b; padding: 20px; position: sticky; top: 0; z-index: 100; border-bottom: 3px solid var(--accent); }
-.team-box { padding: 15px 40px; border-radius: 10px; transition: 0.3s; opacity: 0.5; }
-.team-box.active { opacity: 1; transform: scale(1.05); background: #334155; box-shadow: 0 0 20px var(--accent); }
-.score-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-.adjust-btn { background: #475569; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-weight: bold; }
-.score { font-size: 2.5rem; font-weight: bold; }
+.category-item {
+    background: #334155;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.3s;
+}
 
-/* الشبكة */
-.game-board { display: flex; gap: 15px; padding: 20px; justify-content: center; overflow-x: auto; }
-.genre-column { display: flex; flex-direction: column; gap: 10px; min-width: 150px; }
-.genre-title { background: var(--accent); padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; }
-.card { background: #1e293b; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border-radius: 8px; cursor: pointer; transition: 0.3s; border: 1px solid #334155; }
-.card:hover { background: #334155; transform: translateY(-5px); }
-.card.disabled { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); }
+.category-item.selected {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: white;
+}
 
-/* التصنيفات */
-.categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin: 30px auto; max-width: 1000px; }
-.category-item { background: #1e293b; padding: 20px; border-radius: 10px; cursor: pointer; border: 2px solid transparent; }
-.category-item.selected { border-color: var(--accent); background: #334155; }
-.category-item.played { opacity: 0.3; cursor: not-allowed; background: #000; }
+.category-item.played {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #000;
+    text-decoration: line-through;
+}
 
-/* المودال */
-.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal-content { background: #1e293b; padding: 40px; border-radius: 20px; width: 80%; max-width: 700px; text-align: center; border: 2px solid var(--accent); }
-.question-text { font-size: 2rem; margin: 30px 0; }
-.answer-box { background: var(--correct); color: #000; padding: 20px; border-radius: 10px; font-weight: bold; font-size: 1.5rem; margin-top: 20px; }
-.btn-group { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+/* زر التأكيد */
+.btn-start {
+    background: var(--correct);
+    color: white;
+    padding: 15px 50px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-top: 20px;
+}
 
-/* الأزرار */
-.btn-start { background: var(--accent); color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; }
-.btn-correct { background: var(--correct); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; }
-.btn-wrong { background: var(--wrong); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; }
-.btn-steal { background: #f59e0b; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; }
+.btn-start:disabled {
+    background: #475569;
+    cursor: not-allowed;
+}
 
-/* القائمة الجانبية */
-.side-menu { position: fixed; right: -300px; top: 0; width: 250px; height: 100%; background: #1e293b; transition: 0.3s; z-index: 2000; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
-.side-menu.active { right: 0; }
-.menu-trigger { position: fixed; top: 20px; left: 20px; background: #334155; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; z-index: 1500; }
+/* لوحة اللعبة */
+.game-board {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.card {
+    background: #1e293b;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: 1px solid #334155;
+}
+
+.card.disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
