@@ -1,123 +1,37 @@
-// 1. بنك الأسئلة الكامل (10 أقسام)
+// بنك الأسئلة (10 أقسام - سؤال لكل قيمة)
 const questionsBank = {
-    "قرآن": [
-        { q: "ما هي أطول سورة في القرآن الكريم؟", a: "سورة البقرة", v: 100 },
-        { q: "سورة ذكرت فيها البسملة مرتين؟", a: "سورة النمل", v: 200 },
-        { q: "ما هي أطول آية في القرآن الكريم؟", a: "آية الدين", v: 300 },
-        { q: "الصحابي الوحيد الذي ذكر اسمه في القرآن؟", a: "زيد بن حارثة", v: 400 },
-        { q: "سورة تسمى 'أخت الطويلتين'؟", a: "سورة الأعراف", v: 500 }
-    ],
-    "تاريخ": [
-        { q: "من هو أول خليفة للمسلمين؟", a: "أبو بكر الصديق", v: 100 },
-        { q: "في أي عام تم فتح مكة؟", a: "8 هجري", v: 200 },
-        { q: "متى قامت الثورة الفرنسية؟", a: "1789م", v: 300 },
-        { q: "متى تم توحيد المملكة العربية السعودية؟", a: "1351 هـ", v: 400 },
-        { q: "أول عاصمة للدولة العباسية قبل بغداد؟", a: "الكوفة", v: 500 }
-    ],
-    "فلك": [
-        { q: "ما هو أكبر كوكب في المجموعة الشمسية؟", a: "المشتري", v: 100 },
-        { q: "كم يستغرق ضوء الشمس للوصول للأرض؟", a: "8 دقائق و20 ثانية", v: 200 },
-        { q: "وحدة قياس المسافات بين النجوم؟", a: "السنة الضوئية", v: 300 },
-        { q: "من هو أول إنسان صعد إلى الفضاء؟", a: "يوري غاغارين", v: 400 },
-        { q: "المذنب الذي يظهر كل 76 عاماً؟", a: "مذنب هالي", v: 500 }
-    ],
-    "علوم": [
-        { q: "ما هو الرمز الكيميائي للماء؟", a: "H2O", v: 100 },
-        { q: "أصلب مادة طبيعية في الأرض؟", a: "الألماس", v: 200 },
-        { q: "كم عدد عظام جسم الإنسان البالغ؟", a: "206 عظمة", v: 300 },
-        { q: "أكثر غاز متوفر في الهواء الجوي؟", a: "النيتروجين", v: 400 },
-        { q: "فصيلة دم تسمى 'المعطي العام'؟", a: "O-", v: 500 }
-    ],
-    "حيوانات": [
-        { q: "ما هو أسرع حيوان بري في العالم؟", a: "الفهد (الشيتا)", v: 100 },
-        { q: "ما هو الحيوان الذي يغير لونه للتخفي؟", a: "الحرباء", v: 200 },
-        { q: "ما هو الحيوان الذي له أطول رقبة؟", a: "الزرافة", v: 300 },
-        { q: "ما هو أصغر طائر في العالم؟", a: "طائر الطنان", v: 400 },
-        { q: "حيوان لديه أقوى عضة في العالم؟", a: "التمساح", v: 500 }
-    ],
-    "جغرافيا": [
-        { q: "ما هي أكبر قارة في العالم؟", a: "آسيا", v: 100 },
-        { q: "ما هو أطول نهر في العالم؟", a: "نهر النيل", v: 200 },
-        { q: "ما هي عاصمة اليابان؟", a: "طوكيو", v: 300 },
-        { q: "أين يقع مضيق هرمز؟", a: "بين الخليج العربي وخليج عمان", v: 400 },
-        { q: "ما هي الدولة التي تملك أكبر عدد سكان؟", a: "الهند", v: 500 }
-    ],
-    "رياضة": [
-        { q: "كم عدد لاعبي فريق كرة القدم؟", a: "11 لاعب", v: 100 },
-        { q: "في أي بلد أقيم أول كأس عالم؟", a: "الأوروغواي", v: 200 },
-        { q: "ما هو طول ماراثون الجري؟", a: "42.195 كم", v: 300 },
-        { q: "من هو اللاعب الملقب بالبرغوث؟", a: "ليونيل ميسي", v: 400 },
-        { q: "كم عدد حلقات العلم الأولمبي؟", a: "5 حلقات", v: 500 }
-    ],
-    "أدب": [
-        { q: "من هو شاعر الرسول ﷺ؟", a: "حسان بن ثابت", v: 100 },
-        { q: "ما هو لقب الشاعر أحمد شوقي؟", a: "أمير الشعراء", v: 200 },
-        { q: "من هو كاتب رواية البؤساء؟", a: "فيكتور هوجو", v: 300 },
-        { q: "ما هو الاسم الحقيقي للمتنبي؟", a: "أحمد بن الحسين", v: 400 },
-        { q: "من هو صاحب كتاب 'الحيوان'؟", a: "الجاحظ", v: 500 }
-    ],
-    "اختراعات": [
-        { q: "من هو مخترع المصباح الكهربائي؟", a: "توماس إديسون", v: 100 },
-        { q: "من هو مخترع الهاتف؟", a: "ألكسندر غراهام بيل", v: 200 },
-        { q: "من هو مخترع الطائرة؟", a: "الأخوان رايت", v: 300 },
-        { q: "من هو مخترع الراديو؟", a: "ماركوني", v: 400 },
-        { q: "من هو مخترع المحرك البخاري؟", a: "جيمس واط", v: 500 }
-    ],
-    "عامة": [
-        { q: "ما هو لون الزمرد؟", a: "أخضر", v: 100 },
-        { q: "ما هو صوت الأسد؟", a: "زئير", v: 200 },
-        { q: "ما هي العملة الرسمية في بريطانيا؟", a: "الجنيه الإسترليني", v: 300 },
-        { q: "ما هو أقرب كوكب للأرض؟", a: "الزهرة", v: 400 },
-        { q: "ما هي أكبر جزيرة في العالم؟", a: "جرينلاند", v: 500 }
-    ]
+    "قرآن": [{q:"أطول سورة؟",a:"البقرة",v:100},{q:"سورة ذكرت فيها البسملة مرتين؟",a:"النمل",v:200},{q:"أطول آية؟",a:"الدين",v:300},{q:"صحابي ذكر اسمه؟",a:"زيد بن حارثة",v:400},{q:"أخت الطويلتين؟",a:"الأعراف",v:500}],
+    "تاريخ": [{q:"أول خليفة؟",a:"أبو بكر",v:100},{q:"فتح مكة؟",a:"8 هـ",v:200},{q:"الثورة الفرنسية؟",a:"1789م",v:300},{q:"توحيد السعودية؟",a:"1351 هـ",v:400},{q:"عاصمة العباسيين الأولى؟",a:"الكوفة",v:500}],
+    "فلك": [{q:"أكبر كوكب؟",a:"المشتري",v:100},{q:"مدة وصول ضوء الشمس؟",a:"8 دقائق",v:200},{q:"وحدة المسافات النجمية؟",a:"السنة الضوئية",v:300},{q:"أول بشري في الفضاء؟",a:"يوري غاغارين",v:400},{q:"مذنب يظهر كل 76 عام؟",a:"هالي",v:500}],
+    "علوم": [{q:"رمز الماء؟",a:"H2O",v:100},{q:"أصلب مادة؟",a:"الألماس",v:200},{q:"عدد عظام البالغ؟",a:"206",v:300},{q:"أكثر غاز في الجو؟",a:"النيتروجين",v:400},{q:"المعطي العام؟",a:"O-",v:500}],
+    "حيوانات": [{q:"أسرع حيوان؟",a:"الفهد",v:100},{q:"يغير لونه؟",a:"الحرباء",v:200},{q:"أطول رقبة؟",a:"الزرافة",v:300},{q:"أصغر طائر؟",a:"الطنان",v:400},{q:"أقوى عضة؟",a:"التمساح",v:500}],
+    "جغرافيا": [{q:"أكبر قارة؟",a:"آسيا",v:100},{q:"أطول نهر؟",a:"النيل",v:200},{q:"عاصمة اليابان؟",a:"طوكيو",v:300},{q:"مضيق يربط الخليج؟",a:"هرمز",v:400},{q:"أكبر جزيرة؟",a:"جرينلاند",v:500}],
+    "رياضة": [{q:"عدد لاعبي الكرة؟",a:"11",v:100},{q:"أول بلد استضاف المونديال؟",a:"الأوروغواي",v:200},{q:"مسافة الماراثون؟",a:"42 كم",v:300},{q:"لقب ميسي؟",a:"البرغوث",v:400},{q:"عدد حلقات الأولمبياد؟",a:"5",v:500}],
+    "أدب": [{q:"شاعر الرسول؟",a:"حسان بن ثابت",v:100},{q:"أمير الشعراء؟",a:"أحمد شوقي",v:200},{q:"كاتب البؤساء؟",a:"فيكتور هوجو",v:300},{q:"اسم المتنبي؟",a:"أحمد بن الحسين",v:400},{q:"صاحب كتاب الحيوان؟",a:"الجاحظ",v:500}],
+    "اختراعات": [{q:"مخترع المصباح؟",a:"إديسون",v:100},{q:"مخترع الهاتف؟",a:"غراهام بيل",v:200},{q:"مخترع الطائرة؟",a:"الأخوان رايت",v:300},{q:"مخترع الراديو؟",a:"ماركوني",v:400},{q:"المحرك البخاري؟",a:"جيمس واط",v:500}],
+    "عامة": [{q:"لون الزمرد؟",a:"أخضر",v:100},{q:"صوت الأسد؟",a:"زئير",v:200},{q:"عملة بريطانيا؟",a:"الجنيه",v:300},{q:"أقرب كوكب للأرض؟",a:"الزهرة",v:400},{q:"أكبر محيط؟",a:"الهادي",v:500}]
 };
 
-// 2. إصلاح نظام الصوت وتفعيله مع أول نقرة
+let scores = [0, 0], currentTurn = 0, usedCategories = [], tempSelected = [];
+let perks = { mute: [true, true] }, deletedCount = 0, questionsLeft = 0;
+
+// نظام الصوت
 let audioCtx;
-function initAudio() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+function playSnd(t){
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    g.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    if(t==='correct'){ o.frequency.setValueAtTime(523,0); o.frequency.exponentialRampToValueAtTime(880,0.2); }
+    else if(t==='wrong'){ o.type='sawtooth'; o.frequency.setValueAtTime(150,0); }
+    else { o.type='triangle'; o.frequency.setValueAtTime(440,0); }
+    o.start(); o.stop(audioCtx.currentTime+0.2);
 }
-
-function playSnd(type) {
-    initAudio();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    
-    if (type==='correct') {
-        osc.frequency.setValueAtTime(523, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime+0.2);
-    } else if (type==='wrong') {
-        osc.type='sawtooth';
-        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-    } else if (type==='open') {
-        osc.type='triangle';
-        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-    }
-    
-    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-    osc.start();
-    osc.stop(audioCtx.currentTime+0.2);
-}
-
-// 3. الحالة والمنطق
-let scores = [0, 0];
-let currentTurn = 0;
-let usedCategories = [];
-let perks = { mute: [true, true] };
-let activeCard, activeVal, activeGenre, isStolenMode = false;
-let deletedCount = 0;
-let tempSelected = [];
-
-function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
 
 function saveNamesAndStart() {
-    initAudio(); // تفعيل الصوت عند أول ضغطة
-    const n1 = document.getElementById('name-team1').value || "الفريق 1";
-    const n2 = document.getElementById('name-team2').value || "الفريق 2";
-    document.getElementById('display-name1').innerText = n1;
-    document.getElementById('display-name2').innerText = n2;
+    document.getElementById('display-name1').innerText = document.getElementById('name-team1').value || "الفريق 1";
+    document.getElementById('display-name2').innerText = document.getElementById('name-team2').value || "الفريق 2";
     showCategorySelection();
 }
 
@@ -126,27 +40,24 @@ function showCategorySelection() {
     document.getElementById('main-game').classList.add('hidden');
     document.getElementById('category-selection-screen').classList.remove('hidden');
     
-    if (usedCategories.length > 0) {
+    // ميزة الحذف للجولة الثانية
+    if(usedCategories.length > 0) {
         document.getElementById('delete-perk-area').classList.remove('hidden');
-        const winner = scores[0] >= scores[1] ? document.getElementById('display-name1').innerText : document.getElementById('display-name2').innerText;
-        document.getElementById('winner-msg').innerText = `المتصدر: ${winner} (له حق حذف 3 أسئلة)`;
-        document.getElementById('btn-apply-delete').disabled = false;
+        let winName = scores[0] >= scores[1] ? document.getElementById('display-name1').innerText : document.getElementById('display-name2').innerText;
+        document.getElementById('winner-msg').innerText = `المتصدر: ${winName} (احذف 3 أسئلة)`;
     }
 
     const list = document.getElementById('categories-list');
     list.innerHTML = '';
     tempSelected = [];
     document.getElementById('selected-count').innerText = "0";
-    document.getElementById('start-round-btn').disabled = true;
 
-    // عرض جميع التصنيفات (10 تصنيفات)
     Object.keys(questionsBank).forEach(cat => {
-        const played = usedCategories.includes(cat);
+        const isPlayed = usedCategories.includes(cat);
         const div = document.createElement('div');
-        div.className = 'category-item' + (played ? ' played' : '');
-        div.innerText = cat + (played ? ' (تم لعبها)' : '');
-        
-        if (!played) {
+        div.className = 'category-item' + (isPlayed ? ' played' : '');
+        div.innerText = cat;
+        if(!isPlayed) {
             div.onclick = () => {
                 if(tempSelected.includes(cat)) {
                     tempSelected = tempSelected.filter(c => c!==cat);
@@ -163,14 +74,9 @@ function showCategorySelection() {
     });
 }
 
-function applyDeletePerk() {
-    deletedCount = 3;
-    alert("تم تفعيل ميزة الحذف لهذه الجولة!");
-    document.getElementById('btn-apply-delete').disabled = true;
-}
-
 function confirmCategories() {
     usedCategories.push(...tempSelected);
+    questionsLeft = tempSelected.length * 5; // 25 سؤال في الجولة
     document.getElementById('category-selection-screen').classList.add('hidden');
     document.getElementById('main-game').classList.remove('hidden');
     renderBoard();
@@ -179,19 +85,21 @@ function confirmCategories() {
 function renderBoard() {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
-    // عرض الأقسام الخمسة المختارة للجولة الحالية فقط
     tempSelected.forEach(cat => {
         const col = document.createElement('div');
         col.className = 'genre-column';
-        col.innerHTML = `<div class="genre-title">${cat}</div>`;
+        col.style.flex = "1";
+        col.innerHTML = `<div class="genre-title" style="background:var(--accent); padding:10px; border-radius:5px; margin-bottom:10px; text-align:center;">${cat}</div>`;
         [100, 200, 300, 400, 500].forEach(v => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerText = v;
             
-            if (v === 500 && deletedCount > 0 && Math.random() > 0.4) {
+            // تطبيق الحذف
+            if(v === 500 && deletedCount > 0 && Math.random() > 0.5) {
                 card.classList.add('disabled');
                 card.innerText = "🗑️";
+                questionsLeft--;
                 deletedCount--;
             } else {
                 card.onclick = () => openQuestion(cat, v, card);
@@ -202,73 +110,23 @@ function renderBoard() {
     });
 }
 
-function openQuestion(cat, v, card) {
-    playSnd('open');
-    activeCard = card; activeVal = v; activeGenre = cat; isStolenMode = false;
-    document.getElementById('modal-genre').innerText = `${cat} - ${v}`;
-    let q = questionsBank[cat].find(x => x.v === v);
-    document.getElementById('modal-question-text').innerText = q.q;
-    document.getElementById('modal-answer').innerText = q.a;
-    document.getElementById('modal-answer').classList.add('hidden');
-    document.getElementById('decision-section').classList.remove('hidden');
-    document.getElementById('steal-section').classList.add('hidden');
-    document.getElementById('question-modal').classList.remove('hidden');
-}
-
-function handleResult(isCorrect) {
-    if(isCorrect) {
-        playSnd('correct');
-        scores[currentTurn] += activeVal;
-        document.getElementById('modal-answer').classList.remove('hidden');
-        document.getElementById('decision-section').classList.add('hidden');
-        setTimeout(finalize, 2000);
-    } else {
-        playSnd('wrong');
-        scores[currentTurn] -= activeVal;
-        document.getElementById('decision-section').classList.add('hidden');
-        if(!isStolenMode) document.getElementById('steal-section').classList.remove('hidden');
-        else { 
-            document.getElementById('modal-answer').classList.remove('hidden'); 
-            setTimeout(finalize, 2000); 
-        }
-    }
-    updateUI();
-}
-
-function handleSteal(wants) {
-    document.getElementById('steal-section').classList.add('hidden');
-    if(wants) {
-        currentTurn = (currentTurn === 0 ? 1 : 0);
-        isStolenMode = true;
-        document.getElementById('decision-section').classList.remove('hidden');
-        updateUI();
-    } else {
-        document.getElementById('modal-answer').classList.remove('hidden');
-        setTimeout(finalize, 2000);
-    }
-}
-
-function manualAdjust(team, amt) { scores[team] += amt; updateUI(); }
-
-function usePerk(type, team) {
-    if (type==='mute' && perks.mute[team]) {
-        alert("تسكيت!"); perks.mute[team] = false;
-        document.getElementById(`mute-p${team+1}`).classList.add('disabled');
-        document.getElementById(`mute-p${team+1}`).disabled = true;
-    }
-}
-
 function finalize() {
     activeCard.classList.add('disabled');
     activeCard.onclick = null;
+    questionsLeft--;
     document.getElementById('question-modal').classList.add('hidden');
-    currentTurn = (currentTurn === 0 ? 1 : 0);
-    updateUI();
+    
+    // التحقق من انتهاء الجولة
+    if(questionsLeft <= 0) {
+        setTimeout(() => {
+            alert("انتهت الأسئلة! ننتقل الآن لاختيار أقسام الجولة الثانية.");
+            showCategorySelection();
+        }, 1000);
+    } else {
+        currentTurn = (currentTurn === 0 ? 1 : 0);
+        updateUI();
+    }
 }
 
-function updateUI() {
-    document.getElementById('score1').innerText = scores[0];
-    document.getElementById('score2').innerText = scores[1];
-    document.getElementById('team1-box').classList.toggle('active', currentTurn === 0);
-    document.getElementById('team2-box').classList.toggle('active', currentTurn === 1);
-}
+// باقي الدوال (openQuestion, handleResult, updateUI...) تبقى كما هي
+// تأكد من استدعاء finalize() في نهاية منطق الإجابة
