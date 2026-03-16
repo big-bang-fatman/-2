@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة التحدي الكبرى</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="side-menu" class="side-menu hidden">
+    <button class="close-menu" onclick="toggleMenu()">×</button>
+    <button onclick="location.reload()">لعبة جديدة</button>
+    <button onclick="goToHome()">القائمة الرئيسية</button>
+    <button onclick="showInstructions()">التعليمات</button>
+</div>
+
+<div id="start-screen" class="container">
+    <h1>لعبة التحدي الكبرى 🏆</h1>
+    <button onclick="showCategorySelection()">ابدأ اللعب</button>
+</div>
+
+<div id="category-selection-screen" class="container hidden">
+    <h2>اختر 5 أقسام:</h2>
+    <div id="categories-list" class="categories-grid"></div>
+    <p>الأقسام: <span id="selected-count">0</span> / 5</p>
+    <button id="start-round-btn" onclick="confirmCategories()" disabled>تأكيد</button>
+</div>
+
+<div id="main-game" class="hidden">
+    <button class="menu-trigger" onclick="toggleMenu()">☰</button>
+    <div class="header">
+        <div id="team1-box" class="team-box">
+            <div class="team-name">الفريق 1</div>
+            <div id="score1" class="score">0</div>
+            <div class="perks">
+                <button id="mute-p1" onclick="usePerk('mute', 0)">تسكيت 🤐</button>
+                <button id="delete-p1" onclick="usePerk('delete', 0)">حذف 🗑️</button>
+            </div>
+        </div>
+        <div id="team2-box" class="team-box">
+            <div class="team-name">الفريق 2</div>
+            <div id="score2" class="score">0</div>
+            <div class="perks">
+                <button id="mute-p2" onclick="usePerk('mute', 1)">تسكيت 🤐</button>
+                <button id="delete-p2" onclick="usePerk('delete', 1)">حذف 🗑️</button>
+            </div>
+        </div>
+    </div>
+    <div id="game-board" class="board"></div>
+</div>
+
+<div id="question-modal" class="modal hidden">
+    <div class="modal-content">
+        <h2 id="modal-genre"></h2>
+        <div id="mute-alert" class="mute-banner hidden">🤐 الفريق الخصم مسكّت!</div>
+        <p id="modal-question-text" class="question-text"></p>
+
+        <div id="power-ups-section" class="power-ups">
+            <button onclick="usePowerUp('double')" class="btn-power">تدبيل X2</button>
+            <button onclick="usePowerUp('wheel')" class="btn-power">عجلة الحظ 🎰</button>
+            <button onclick="changeQuestion()" class="btn-power">تغيير السؤال</button>
+        </div>
+
+        <div id="wheel-result" class="hidden"></div>
+        <h3 id="modal-answer" class="hidden"></h3>
+
+        <div id="action-buttons">
+            <button id="btn-reveal" onclick="revealAnswer()" class="btn-reveal">إظهار الإجابة</button>
+            <div id="decision-section" class="hidden">
+                <button onclick="handleResult(true)" class="btn-correct">صح ✅</button>
+                <button onclick="handleResult(false)" class="btn-wrong">خطأ ❌</button>
+            </div>
+            <div id="steal-section" class="hidden">
+                <p>الفريق الأول أخطأ! هل يريد الفريق الآخر السرقة؟</p>
+                <button onclick="handleSteal(true)" class="btn-steal">سرقة 💰</button>
+                <button onclick="handleSteal(false)" class="btn-no-steal">لا أسرق ✋</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
