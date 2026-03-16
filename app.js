@@ -1,3 +1,4 @@
+// بنك الأسئلة المختصر (10 أقسام - سؤال لكل قيمة)
 const questionsBank = {
     "قرآن": [{q:"أطول سورة؟",a:"البقرة",v:100},{q:"سورة فيها بسملتين؟",a:"النمل",v:200},{q:"أطول آية؟",a:"الدين",v:300},{q:"صحابي ذكر اسمه؟",a:"زيد بن حارثة",v:400},{q:"أخت الطويلتين؟",a:"الأعراف",v:500}],
     "تاريخ": [{q:"أول خليفة؟",a:"أبو بكر",v:100},{q:"فتح مكة؟",a:"8 هـ",v:200},{q:"الثورة الفرنسية؟",a:"1789م",v:300},{q:"توحيد المملكة؟",a:"1351 هـ",v:400},{q:"عاصمة العباسيين الأولى؟",a:"الكوفة",v:500}],
@@ -12,38 +13,37 @@ const questionsBank = {
 };
 
 let scores = [0, 0], currentTurn = 0, usedCategories = [], tempSelected = [];
-let perks = {
-    team0: { double: true, wheel: true, half: true },
-    team1: { double: true, wheel: true, half: true }
+let perksStatus = {
+    0: { double: true, wheel: true, half: true },
+    1: { double: true, wheel: true, half: true }
 };
 let activePerk = null, questionsLeft = 0, deletedCount = 0;
 let activeCard, activeVal;
 
-// إدارة القائمة والتعليمات
-function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
-function restartGame() { location.reload(); }
-function showInstructions() { alert("1. اختر 5 أقسام\n2. استخدم المزايا لزيادة نقاطك\n3. الجولة 2 تبدأ تلقائياً مع حذف 3 أسئلة للمتصدر"); }
-
-// تفعيل الميزة
+// إدارة المزايا
 function usePerk(type) {
-    let p = perks[`team${currentTurn}`];
-    if (!p[type]) return;
+    if (!perksStatus[currentTurn][type]) return;
     
-    document.querySelectorAll('.perk-btn').forEach(b => b.classList.remove('active-perk'));
+    // إلغاء تفعيل أي ميزة سابقة قبل اختيار الجديدة
     activePerk = type;
-    const btnId = type + (currentTurn + 1);
+    document.querySelectorAll(`.team-box:nth-child(${currentTurn === 0 ? 1 : 3}) .perk-btn`).forEach(btn => {
+        btn.classList.remove('active-perk');
+    });
+    
+    const btnId = `${type}${currentTurn + 1}`;
     document.getElementById(btnId).classList.add('active-perk');
 }
 
+// بدء المسابقة وحفظ الأسماء
 function saveNamesAndStart() {
-    document.getElementById('display-name1').innerText = document.getElementById('name-team1').value || "الفريق 1";
-    document.getElementById('display-name2').innerText = document.getElementById('name-team2').value || "الفريق 2";
+    document.getElementById('name1-display').innerText = document.getElementById('name-team1').value || "الفريق 1";
+    document.getElementById('name2-display').innerText = document.getElementById('name-team2').value || "الفريق 2";
     showCategorySelection();
 }
 
 function showCategorySelection() {
-    document.getElementById('start-screen').classList.add('hidden');
-    document.getElementById('main-game').classList.add('hidden');
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('main-game').style.display = 'none';
     document.getElementById('category-selection-screen').classList.remove('hidden');
     
     const list = document.getElementById('categories-list');
@@ -74,13 +74,12 @@ function showCategorySelection() {
 function confirmCategories() {
     usedCategories.push(...tempSelected);
     questionsLeft = tempSelected.length * 5;
-    
-    // تفعيل الحذف في بداية الجولة الثانية
-    if(usedCategories.length > 5) deletedCount = 3;
+    if(usedCategories.length > 5) deletedCount = 3; // تفعيل الحذف للجولة الثانية
 
     document.getElementById('category-selection-screen').classList.add('hidden');
-    document.getElementById('main-game').classList.remove('hidden');
+    document.getElementById('main-game').style.display = 'block';
     renderBoard();
+    updateUI();
 }
 
 function renderBoard() {
@@ -88,12 +87,12 @@ function renderBoard() {
     board.innerHTML = '';
     tempSelected.forEach(cat => {
         const col = document.createElement('div');
-        col.className = 'genre-column'; col.style.flex = "1";
-        col.innerHTML = `<div class="genre-title" style="background:var(--accent); padding:10px; border-radius:5px; text-align:center; margin-bottom:10px;">${cat}</div>`;
-        
+        col.className = 'genre-column';
+        col.innerHTML = `<div class="genre-title">${cat}</div>`;
         [100, 200, 300, 400, 500].forEach(v => {
             const card = document.createElement('div');
-            card.className = 'card'; card.innerText = v;
+            card.className = 'card';
+            card.innerText = v;
             
             if(v === 500 && deletedCount > 0) {
                 card.classList.add('disabled'); card.innerText = "🗑️";
@@ -109,14 +108,12 @@ function renderBoard() {
 
 function openQuestion(cat, v, card) {
     activeCard = card; activeVal = v;
-    document.getElementById('modal-genre').innerText = `${cat} - ${v}`;
     let q = questionsBank[cat].find(x => x.v === v);
-    document.getElementById('modal-question-text').innerText = q.q;
-    document.getElementById('modal-answer').innerText = q.a;
-    
-    document.getElementById('modal-answer').classList.add('hidden');
-    document.getElementById('decision-section').classList.remove('hidden');
-    document.getElementById('question-modal').classList.remove('hidden');
+    document.getElementById('modal-q-text').innerText = q.q;
+    document.getElementById('modal-ans-text').innerText = q.a;
+    document.getElementById('modal-ans-text').style.display = 'none';
+    document.getElementById('modal-btns').style.display = 'block';
+    document.getElementById('q-modal').style.display = 'flex';
 }
 
 function handleResult(isCorrect) {
@@ -128,40 +125,43 @@ function handleResult(isCorrect) {
     if(isCorrect) scores[currentTurn] += finalVal;
     else scores[currentTurn] -= finalVal;
 
-    // تعتيم الميزة المستخدمة
+    // استهلاك الميزة
     if(activePerk) {
-        const btnId = activePerk + (currentTurn + 1);
+        const btnId = `${activePerk}${currentTurn + 1}`;
         const btn = document.getElementById(btnId);
         btn.classList.remove('active-perk');
         btn.classList.add('used');
-        perks[`team${currentTurn}`][activePerk] = false;
+        perksStatus[currentTurn][activePerk] = false;
         activePerk = null;
     }
 
-    updateUI();
-    document.getElementById('modal-answer').classList.remove('hidden');
-    document.getElementById('decision-section').classList.add('hidden');
-    setTimeout(finalize, 2000);
-}
-
-function finalize() {
-    activeCard.classList.add('disabled');
-    activeCard.onclick = null;
-    questionsLeft--;
-    document.getElementById('question-modal').classList.add('hidden');
+    document.getElementById('modal-ans-text').style.display = 'block';
+    document.getElementById('modal-btns').style.display = 'none';
     
-    if(questionsLeft <= 0) {
-        alert("انتهت الجولة! لننتقل لتصنيفات جديدة.");
-        showCategorySelection();
-    } else {
-        currentTurn = (currentTurn === 0 ? 1 : 0);
-        updateUI();
-    }
+    setTimeout(() => {
+        document.getElementById('q-modal').style.display = 'none';
+        activeCard.classList.add('disabled');
+        activeCard.onclick = null;
+        questionsLeft--;
+        
+        if(questionsLeft <= 0) {
+            alert("انتهت الجولة! ننتقل لاختيار الأقسام المتبقية.");
+            showCategorySelection();
+        } else {
+            currentTurn = (currentTurn === 0 ? 1 : 0);
+            updateUI();
+        }
+    }, 2000);
 }
 
 function updateUI() {
     document.getElementById('score1').innerText = scores[0];
     document.getElementById('score2').innerText = scores[1];
-    document.getElementById('team1-box').style.border = currentTurn === 0 ? "2px solid var(--accent)" : "none";
-    document.getElementById('team2-box').style.border = currentTurn === 1 ? "2px solid var(--accent)" : "none";
+    document.getElementById('team1-ui').classList.toggle('active', currentTurn === 0);
+    document.getElementById('team2-ui').classList.toggle('active', currentTurn === 1);
 }
+
+// دوال القائمة
+function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
+function restartGame() { location.reload(); }
+function showInstructions() { alert("1. اختر 5 أقسام.\n2. لكل فريق 3 مزايا تستخدم مرة واحدة.\n3. الجولة 2 تبدأ تلقائياً."); }
