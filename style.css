@@ -1,32 +1,131 @@
-body { font-family: 'Cairo', sans-serif; background: #1a1a2e; color: white; margin: 0; direction: rtl; }
-.hidden { display: none !important; }
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
 
-/* المنيو الجانبي */
-.side-menu { position: fixed; right: 0; top: 0; width: 250px; height: 100%; background: #16213e; z-index: 1000; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
-.side-menu button { display: block; width: 100%; margin-bottom: 10px; padding: 15px; background: #0f3460; border: none; color: white; cursor: pointer; }
-.menu-trigger { position: fixed; top: 20px; right: 20px; font-size: 30px; background: none; border: none; color: white; cursor: pointer; z-index: 999; }
+:root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --accent: #3b82f6;
+    --correct: #22c55e;
+    --wrong: #ef4444;
+    --text: #f8fafc;
+}
 
-/* إضاءة دور الفريق */
-.team-box { padding: 20px; border-radius: 15px; background: #16213e; transition: 0.4s; border: 2px solid transparent; }
-.team-box.active { border-color: #e94560; box-shadow: 0 0 20px #e94560; transform: scale(1.05); }
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text);
+    margin: 0;
+    direction: rtl;
+    overflow-x: hidden;
+}
 
-/* الخصائص Perks */
-.perks { margin-top: 10px; display: flex; gap: 5px; justify-content: center; }
-.perks button { font-size: 12px; padding: 5px; background: #4e34e1; border-radius: 5px; border: none; color: white; }
-.perks button.used { background: #333; opacity: 0.5; cursor: not-allowed; }
+/* القائمة الجانبية */
+.side-menu {
+    position: fixed;
+    top: 0; right: -280px;
+    width: 250px; height: 100%;
+    background: #1e293b;
+    z-index: 3000;
+    transition: 0.3s;
+    padding: 2rem;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+}
+.side-menu.active { right: 0; }
+.side-menu button {
+    width: 100%; padding: 12px; margin-bottom: 1rem;
+    border: none; border-radius: 8px; background: #334155;
+    color: white; font-weight: bold; cursor: pointer;
+}
 
-/* اللوحة */
-.board { display: flex; gap: 15px; padding: 20px; justify-content: center; }
-.genre-column { display: flex; flex-direction: column; gap: 10px; width: 180px; }
-.genre-title { background: #e94560; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; }
-.card { background: #0f3460; height: 70px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
-.card.disabled { background: #333 !important; color: #666; cursor: not-allowed; }
+/* الهيدر ونقاط الفرق */
+.header {
+    display: flex; justify-content: space-around;
+    padding: 1.5rem; background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px); sticky; top: 0; z-index: 100;
+}
 
-/* النوافذ */
-.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 2000; }
-.modal-content { background: white; color: #1a1a2e; padding: 40px; border-radius: 20px; width: 70%; text-align: center; position: relative; }
-.mute-banner { background: #ff9800; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+.team-box {
+    text-align: center; padding: 1rem 2rem;
+    border-radius: 16px; min-width: 150px;
+    transition: 0.4s; border: 3px solid transparent;
+}
 
-/* أزرار السرقة */
-.btn-steal { background: #27ae60; color: white; }
-.btn-no-steal { background: #7f8c8d; color: white; }
+.team-box.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    transform: translateY(-5px);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.score { font-size: 2.5rem; font-weight: 900; color: var(--accent); }
+
+/* لوحة اللعب */
+.board {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 15px; padding: 20px; max-width: 1200px; margin: auto;
+}
+
+.genre-column { display: contents; }
+
+.genre-title {
+    background: var(--accent); padding: 15px 5px;
+    border-radius: 12px; font-weight: bold; text-align: center;
+    font-size: 1.1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.card {
+    background: var(--card-bg); height: 90px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; font-weight: bold; cursor: pointer;
+    border-radius: 12px; transition: 0.2s;
+    border-bottom: 4px solid #0f172a;
+}
+
+.card:hover { transform: scale(1.05); background: #334155; }
+.card.disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+
+/* النافذة المنبثقة (المودال) */
+.modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+    display: flex; align-items: center; justify-content: center; z-index: 2000;
+}
+
+.modal-content {
+    background: #1e293b; padding: 3rem; border-radius: 24px;
+    width: 85%; max-width: 800px; text-align: center;
+    border: 1px solid #334155;
+}
+
+.question-text { font-size: 2rem; line-height: 1.6; margin: 2rem 0; }
+
+.btn-reveal {
+    background: var(--accent); color: white; border: none;
+    padding: 15px 40px; border-radius: 50px; font-size: 1.2rem;
+    cursor: pointer; width: 100%;
+}
+
+.action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+.btn-correct { background: var(--correct); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-size: 1.2rem; }
+.btn-wrong { background: var(--wrong); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-size: 1.2rem; }
+
+/* أزرار الخصائص */
+.perks { display: flex; gap: 8px; margin-top: 10px; }
+.perk-btn {
+    flex: 1; padding: 6px; font-size: 0.8rem; border: 1px solid #475569;
+    background: transparent; color: #94a3b8; border-radius: 6px; cursor: pointer;
+}
+.perk-btn.used { text-decoration: line-through; opacity: 0.4; }
+
+/* شاشة البداية */
+.container {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 100vh; text-align: center;
+}
+.categories-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px; width: 80%; margin: 2rem 0;
+}
+.category-item {
+    background: var(--card-bg); padding: 20px; border-radius: 12px;
+    cursor: pointer; border: 2px solid transparent;
+}
+.category-item.selected { border-color: var(--accent); background: rgba(59, 130, 246, 0.2); }
