@@ -1,64 +1,74 @@
-// 1. بنك الأسئلة المختصر (سؤالين لكل فئة سعرية)
+// 1. بنك الأسئلة (10 أقسام - سؤال واحد لكل قيمة)
 const questionsBank = {
     "قرآن": [
         { q: "ما هي أطول سورة في القرآن الكريم؟", a: "سورة البقرة", v: 100 },
-        { q: "كم عدد سور القرآن الكريم؟", a: "114 سورة", v: 100 },
         { q: "سورة ذكرت فيها البسملة مرتين؟", a: "سورة النمل", v: 200 },
-        { q: "ما هي السورة التي لا تبدأ بالبسملة؟", a: "سورة التوبة", v: 200 },
         { q: "ما هي أطول آية في القرآن الكريم؟", a: "آية الدين", v: 300 },
-        { q: "كم عدد السجدات في القرآن الكريم؟", a: "15 سجدة", v: 300 },
-        { q: "سورة تسمى 'الفاضحة'؟", a: "سورة التوبة", v: 400 },
         { q: "الصحابي الوحيد الذي ذكر اسمه في القرآن؟", a: "زيد بن حارثة", v: 400 },
-        { q: "سورة تسمى 'أخت الطويلتين'؟", a: "سورة الأعراف", v: 500 },
-        { q: "كم عدد الأحزاب في القرآن الكريم؟", a: "60 حزباً", v: 500 }
+        { q: "سورة تسمى 'أخت الطويلتين'؟", a: "سورة الأعراف", v: 500 }
     ],
     "تاريخ": [
         { q: "من هو أول خليفة للمسلمين؟", a: "أبو بكر الصديق", v: 100 },
-        { q: "من بنى الأهرامات في مصر؟", a: "الفراعنة", v: 100 },
-        { q: "من هو القائد الذي انتصر في معركة حطين؟", a: "صلاح الدين الأيوبي", v: 200 },
         { q: "في أي عام تم فتح مكة؟", a: "8 هجري", v: 200 },
-        { q: "ما هي المدينة التي كانت تسمى 'يثرب'؟", a: "المدينة المنورة", v: 300 },
         { q: "متى قامت الثورة الفرنسية؟", a: "1789م", v: 300 },
-        { q: "من هو مؤسس الدولة العثمانية؟", a: "عثمان الأول", v: 400 },
         { q: "متى تم توحيد المملكة العربية السعودية؟", a: "1351 هـ", v: 400 },
-        { q: "ما هو الاسم القديم لمدينة إسطنبول؟", a: "القسطنطينية", v: 500 },
         { q: "أول عاصمة للدولة العباسية قبل بغداد؟", a: "الكوفة", v: 500 }
     ],
     "فلك": [
         { q: "ما هو أكبر كوكب في المجموعة الشمسية؟", a: "المشتري", v: 100 },
-        { q: "الكوكب الذي يلقب بـ 'الكوكب الأحمر'؟", a: "المريخ", v: 100 },
-        { q: "كوكب تحيط به حلقات واضحة؟", a: "زحل", v: 200 },
         { q: "كم يستغرق ضوء الشمس للوصول للأرض؟", a: "8 دقائق و20 ثانية", v: 200 },
         { q: "وحدة قياس المسافات بين النجوم؟", a: "السنة الضوئية", v: 300 },
-        { q: "الكوكب الذي يدور حول نفسه عكس الباقي؟", a: "الزهرة", v: 300 },
-        { q: "أشد كواكب المجموعة حرارة؟", a: "الزهرة", v: 400 },
         { q: "من هو أول إنسان صعد إلى الفضاء؟", a: "يوري غاغارين", v: 400 },
-        { q: "كم تبلغ سرعة الضوء؟", a: "299,792 كم/ثانية", v: 500 },
         { q: "المذنب الذي يظهر كل 76 عاماً؟", a: "مذنب هالي", v: 500 }
     ],
     "علوم": [
         { q: "ما هو الرمز الكيميائي للماء؟", a: "H2O", v: 100 },
-        { q: "كم عدد حواس الإنسان؟", a: "5 حواس", v: 100 },
         { q: "أصلب مادة طبيعية في الأرض؟", a: "الألماس", v: 200 },
-        { q: "ما هي وحدة قياس القوة؟", a: "النيوتن", v: 200 },
         { q: "كم عدد عظام جسم الإنسان البالغ؟", a: "206 عظمة", v: 300 },
-        { q: "ما هي أصغر وحدة في العنصر؟", a: "الذرة", v: 300 },
-        { q: "من هو مكتشف الجاذبية؟", a: "إسحاق نيوتن", v: 400 },
         { q: "أكثر غاز متوفر في الهواء الجوي؟", a: "النيتروجين", v: 400 },
-        { q: "فصيلة دم تسمى 'المعطي العام'؟", a: "O-", v: 500 },
-        { q: "كم عدد العناصر في الجدول الدوري؟", a: "118 عنصراً", v: 500 }
+        { q: "فصيلة دم تسمى 'المعطي العام'؟", a: "O-", v: 500 }
     ],
     "حيوانات": [
         { q: "ما هو أسرع حيوان بري في العالم؟", a: "الفهد (الشيتا)", v: 100 },
-        { q: "حيوان يلقب بـ 'سفينة الصحراء'؟", a: "الجمل", v: 100 },
         { q: "ما هو الحيوان الذي يغير لونه للتخفي؟", a: "الحرباء", v: 200 },
-        { q: "حيوان زاحف ليس له أرجل؟", a: "الثعبان", v: 200 },
-        { q: "حيوان يحمل صغيره في جراب؟", a: "الكنغر", v: 300 },
         { q: "ما هو الحيوان الذي له أطول رقبة؟", a: "الزرافة", v: 300 },
-        { q: "كم قلب للأخطبوط؟", a: "3 قلوب", v: 400 },
         { q: "ما هو أصغر طائر في العالم؟", a: "طائر الطنان", v: 400 },
-        { q: "حيوان يتنفس من مؤخرته؟", a: "السلحفاة (أنواع معينة)", v: 500 },
         { q: "حيوان لديه أقوى عضة في العالم؟", a: "التمساح", v: 500 }
+    ],
+    "جغرافيا": [
+        { q: "ما هي أكبر قارة في العالم؟", a: "آسيا", v: 100 },
+        { q: "ما هو أطول نهر في العالم؟", a: "نهر النيل", v: 200 },
+        { q: "ما هي عاصمة اليابان؟", a: "طوكيو", v: 300 },
+        { q: "أين يقع مضيق هرمز؟", a: "بين الخليج العربي وخليج عمان", v: 400 },
+        { q: "ما هي الدولة التي تملك أكبر عدد سكان؟", a: "الهند (حالياً)", v: 500 }
+    ],
+    "رياضة": [
+        { q: "كم عدد لاعبي فريق كرة القدم؟", a: "11 لاعب", v: 100 },
+        { q: "في أي بلد أقيم أول كأس عالم؟", a: "الأوروغواي", v: 200 },
+        { q: "ما هو طول ماراثون الجري؟", a: "42.195 كم", v: 300 },
+        { q: "من هو اللاعب الملقب بالبرغوث؟", a: "ليونيل ميسي", v: 400 },
+        { q: "كم عدد حلقات العلم الأولمبي؟", a: "5 حلقات", v: 500 }
+    ],
+    "أدب": [
+        { q: "من هو شاعر الرسول ﷺ؟", a: "حسان بن ثابت", v: 100 },
+        { q: "ما هو لقب الشاعر أحمد شوقي؟", a: "أمير الشعراء", v: 200 },
+        { q: "من هو كاتب رواية البؤساء؟", a: "فيكتور هوجو", v: 300 },
+        { q: "ما هو الاسم الحقيقي للمتنبي؟", a: "أحمد بن الحسين", v: 400 },
+        { q: "من هو صاحب كتاب 'الحيوان'؟", a: "الجاحظ", v: 500 }
+    ],
+    "اختراعات": [
+        { q: "من هو مخترع المصباح الكهربائي؟", a: "توماس إديسون", v: 100 },
+        { q: "من هو مخترع الهاتف؟", a: "ألكسندر غراهام بيل", v: 200 },
+        { q: "من هو مخترع الطائرة؟", a: "الأخوان رايت", v: 300 },
+        { q: "من هو مخترع الراديو؟", a: "ماركوني", v: 400 },
+        { q: "من هو مخترع المحرك البخاري؟", a: "جيمس واط", v: 500 }
+    ],
+    "معلومات عامة": [
+        { q: "ما هو لون الزمرد؟", a: "أخضر", v: 100 },
+        { q: "ما هو صوت الأسد؟", a: "زئير", v: 200 },
+        { q: "ما هي العملة الرسمية في بريطانيا؟", a: "الجنيه الإسترليني", v: 300 },
+        { q: "ما هو أقرب كوكب للأرض؟", a: "الزهرة", v: 400 },
+        { q: "ما هي أكبر جزيرة في العالم؟", a: "جرينلاند", v: 500 }
     ]
 };
 
@@ -98,10 +108,12 @@ function showCategorySelection() {
     document.getElementById('main-game').classList.add('hidden');
     document.getElementById('category-selection-screen').classList.remove('hidden');
     
+    // ميزة الحذف تظهر فقط إذا كانت هناك جولة سابقة
     if (usedCategories.length > 0) {
         document.getElementById('delete-perk-area').classList.remove('hidden');
         const winner = scores[0] >= scores[1] ? document.getElementById('display-name1').innerText : document.getElementById('display-name2').innerText;
-        document.getElementById('winner-msg').innerText = `المتصدر: ${winner} (له حق الحذف)`;
+        document.getElementById('winner-msg').innerText = `المتصدر: ${winner} (له حق حذف 3 أسئلة)`;
+        document.getElementById('btn-apply-delete').disabled = false;
     }
 
     const list = document.getElementById('categories-list');
@@ -109,17 +121,22 @@ function showCategorySelection() {
     let selected = [];
     
     Object.keys(questionsBank).forEach(cat => {
-        const div = document.createElement('div');
         const played = usedCategories.includes(cat);
+        const div = document.createElement('div');
         div.className = 'category-item' + (played ? ' played' : '');
         div.innerText = cat + (played ? ' (تم لعبها)' : '');
+        
         if (!played) {
             div.onclick = () => {
-                if(selected.includes(cat)) selected = selected.filter(c => c!==cat);
-                else if(selected.length < 5) selected.push(cat);
+                if(selected.includes(cat)) {
+                    selected = selected.filter(c => c!==cat);
+                    div.classList.remove('selected');
+                } else if(selected.length < 5) {
+                    selected.push(cat);
+                    div.classList.add('selected');
+                }
                 document.getElementById('selected-count').innerText = selected.length;
                 document.getElementById('start-round-btn').disabled = selected.length !== 5;
-                Array.from(list.children).forEach(c => c.classList.toggle('selected', selected.includes(c.innerText)));
             };
         }
         list.appendChild(div);
@@ -129,7 +146,7 @@ function showCategorySelection() {
 
 function applyDeletePerk() {
     deletedCount = 3;
-    alert("تم تفعيل حذف 3 أسئلة (500) عشوائياً!");
+    alert("سيتم حذف 3 أسئلة من فئة 500 في هذه الجولة!");
     document.getElementById('btn-apply-delete').disabled = true;
 }
 
@@ -151,10 +168,13 @@ function renderBoard() {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerText = v;
+            
+            // تطبيق حذف الأسئلة للمتصدر
             if (v === 500 && deletedCount > 0 && Math.random() > 0.4) {
-                card.classList.add('disabled'); card.innerText = "❌"; deletedCount--;
+                card.classList.add('disabled');
+                card.innerText = "🗑️";
+                deletedCount--;
             } else {
-                // اختيار سؤال عشوائي من الفئة المحددة (لكي لا يتكرر نفس السؤال دائماً)
                 card.onclick = () => openQuestion(cat, v, card);
             }
             col.appendChild(card);
@@ -167,13 +187,10 @@ function openQuestion(cat, v, card) {
     playSnd('open');
     activeCard = card; activeVal = v; activeGenre = cat; isStolenMode = false;
     document.getElementById('modal-genre').innerText = `${cat} - ${v}`;
-    
-    // سحب سؤال عشوائي من المتاح لهذه القيمة
-    let pool = questionsBank[cat].filter(x => x.v === v);
-    let q = pool[Math.floor(Math.random() * pool.length)];
-    
+    let q = questionsBank[cat].find(x => x.v === v);
     document.getElementById('modal-question-text').innerText = q.q;
     document.getElementById('modal-answer').innerText = q.a;
+    
     document.getElementById('modal-answer').classList.add('hidden');
     document.getElementById('decision-section').classList.remove('hidden');
     document.getElementById('steal-section').classList.add('hidden');
@@ -192,38 +209,47 @@ function handleResult(isCorrect) {
         scores[currentTurn] -= activeVal;
         document.getElementById('decision-section').classList.add('hidden');
         if(!isStolenMode) document.getElementById('steal-section').classList.remove('hidden');
-        else { document.getElementById('modal-answer').classList.remove('hidden'); setTimeout(finalize, 2000); }
+        else { 
+            document.getElementById('modal-answer').classList.remove('hidden'); 
+            setTimeout(finalize, 2000); 
+        }
     }
     updateUI();
 }
 
 function handleSteal(wants) {
     document.getElementById('steal-section').classList.add('hidden');
-    if(wants) { 
-        currentTurn = (currentTurn === 0 ? 1 : 0); 
-        isStolenMode = true; 
-        document.getElementById('decision-section').classList.remove('hidden'); 
-        updateUI(); 
-    } else { 
-        document.getElementById('modal-answer').classList.remove('hidden'); 
-        setTimeout(finalize, 2000); 
+    if(wants) {
+        currentTurn = (currentTurn === 0 ? 1 : 0);
+        isStolenMode = true;
+        document.getElementById('decision-section').classList.remove('hidden');
+        updateUI();
+    } else {
+        document.getElementById('modal-answer').classList.remove('hidden');
+        setTimeout(finalize, 2000);
     }
 }
 
-function manualAdjust(team, amt) { scores[team] += amt; updateUI(); }
+function manualAdjust(team, amt) {
+    scores[team] += amt;
+    updateUI();
+}
 
 function usePerk(type, team) {
     if (type==='mute' && perks.mute[team]) {
-        alert("تم التسكيت!"); perks.mute[team] = false;
-        const btn = document.getElementById(`mute-p${team+1}`);
-        btn.classList.add('disabled'); btn.disabled = true;
+        alert("تم تفعيل ميزة التسكيت!");
+        perks.mute[team] = false;
+        document.getElementById(`mute-p${team+1}`).classList.add('disabled');
+        document.getElementById(`mute-p${team+1}`).disabled = true;
     }
 }
 
 function finalize() {
-    activeCard.classList.add('disabled'); activeCard.onclick = null;
+    activeCard.classList.add('disabled');
+    activeCard.onclick = null;
     document.getElementById('question-modal').classList.add('hidden');
-    currentTurn = (currentTurn === 0 ? 1 : 0); updateUI();
+    currentTurn = (currentTurn === 0 ? 1 : 0);
+    updateUI();
 }
 
 function updateUI() {
