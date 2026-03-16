@@ -131,7 +131,7 @@ const questionsBank = {
         { q: "من القائل: 'ذو العَقلِ يَشقَى في النّعيمِ بعَقْلِهِ'؟", a: "المتنبي", v: 400 },
         { q: "من القائل: 'أتاك الربيع الطلق يختال ضاحكاً'؟", a: "البحتري", v: 500 },
         { q: "من القائل: 'ولست أبالي حين أقتل مسلماً..'؟", a: "خبيب بن عدي", v: 500 },
-        { q: "من القائل: 'تجري الرياح بما لا تشتهي السفن'؟", a: "المتنبي", v: 500 },
+        { q: "من القائل: 'تجري الرياح بما لا تشتهي السفن'? ", a: "المتنبي", v: 500 },
         { q: "من القائل: 'يخاطبني السفيه بكل قبح..'؟", a: "الإمام الشافعي", v: 500 },
         { q: "من القائل: 'ما حك جلدك مثل ظفرك'؟", a: "الإمام الشافعي", v: 500 }
     ],
@@ -223,7 +223,7 @@ const questionsBank = {
         { q: "ما هو المعدن الأساسي في صناعة الفولاذ؟", a: "الحديد", v: 100 },
         { q: "معدن يستخدم في صناعة العملات المعدنية والأسلاك؟", a: "النحاس", v: 100 },
         { q: "ما هو الرمز الكيميائي للفضة؟", a: "Ag", v: 200 },
-        { q: "معدن خفيف الوزن يستخدم في صناعة الطائرات? ", a: "الألمنيوم", v: 200 },
+        { q: "معدن خفيف الوزن يستخدم في صناعة الطائرات؟", a: "الألمنيوم", v: 200 },
         { q: "ما هو المعدن الذي يسمى 'الذهب الأسود'؟", a: "البترول (مجازاً) أو الفحم", v: 200 },
         { q: "معدن يتميز بلونه الأحمر وبأنه موصل ممتاز للكهرباء؟", a: "النحاس", v: 200 },
         { q: "ما هو العنصر الرئيسي في قلم الرصاص؟", a: "الجرافيت (كربون)", v: 200 },
@@ -282,10 +282,14 @@ let currentTurn = 0;
 let perks = { mute: [true, true], delete: [true, true] };
 let activeCard, activeVal, activeGenre, activeMult = 1, isStolenMode = false;
 
-// --- وظائف الواجهة ---
-function toggleMenu() { document.getElementById('side-menu').classList.toggle('hidden'); }
-function goToHome() { location.reload(); }
-function showInstructions() { alert("تعليمات اللعبة:\n1. اختر 5 أقسام للعب.\n2. الفريق المضيء هو من يختار السؤال.\n3. الخصائص (تسكيت، حذف) تستخدم مرة واحدة فقط.\n4. في حال الخطأ، يحق للفريق الآخر السرقة."); }
+// --- وظائف المنيو والواجهة ---
+function toggleMenu() {
+    document.getElementById('side-menu').classList.toggle('active');
+}
+
+function showInstructions() {
+    alert("التعليمات:\n1. اختر 5 أقسام.\n2. الفريق المضيء يختار السؤال.\n3. التسكيت والحذف لمرة واحدة.\n4. عند الخطأ، يقرر الخصم هل يسرق أم لا.");
+}
 
 function showCategorySelection() {
     document.getElementById('start-screen').classList.add('hidden');
@@ -329,16 +333,16 @@ function confirmCategories() {
     updateUI();
 }
 
-// --- منطق الأسئلة ---
+// --- منطق السؤال والسرقة ---
 function openQuestion(cat, v, card) {
     if(card.classList.contains('disabled')) return;
     activeCard = card; activeVal = v; activeGenre = cat; activeMult = 1; isStolenMode = false;
-
+    
     document.getElementById('modal-genre').innerText = cat + " - " + v;
     let q = questionsBank[cat].find(x => x.v === v);
     document.getElementById('modal-question-text').innerText = q.q;
     document.getElementById('modal-answer').innerText = q.a;
-
+    
     document.getElementById('modal-answer').classList.add('hidden');
     document.getElementById('decision-section').classList.add('hidden');
     document.getElementById('steal-section').classList.add('hidden');
@@ -366,6 +370,7 @@ function handleResult(isCorrect) {
         scores[currentTurn] -= p;
         playSnd(200, 0.3, "sawtooth");
         if(!isStolenMode) {
+            // إخفاء الجواب وأزرار التحكم وإظهار خيار السرقة
             document.getElementById('decision-section').classList.add('hidden');
             document.getElementById('modal-answer').classList.add('hidden');
             document.getElementById('steal-section').classList.remove('hidden');
@@ -379,7 +384,7 @@ function handleResult(isCorrect) {
 function handleSteal(wantsToSteal) {
     document.getElementById('steal-section').classList.add('hidden');
     if(wantsToSteal) {
-        currentTurn = (currentTurn === 0) ? 1 : 0;
+        currentTurn = (currentTurn === 0) ? 1 : 0; // تغيير الدور للفريق الآخر
         isStolenMode = true;
         document.getElementById('modal-answer').classList.add('hidden');
         document.getElementById('decision-section').classList.remove('hidden');
@@ -395,42 +400,39 @@ function usePerk(type, team) {
     if(!perks[type][team]) return;
 
     if(type === 'delete') {
-        const winner = scores[0] > scores[1] ? 0 : 1;
+        const winner = scores[0] >= scores[1] ? 0 : 1;
         if(team === winner) {
             const allCards = Array.from(document.querySelectorAll('.card:not(.disabled)'));
             const hardCards = allCards.filter(c => c.innerText === "500");
-
+            
             if(hardCards.length > 0) {
                 const target = hardCards[Math.floor(Math.random() * hardCards.length)];
                 target.classList.add('disabled');
                 target.innerText = "❌";
-                target.style.backgroundColor = "#c0392b";
+                target.style.backgroundColor = "#ef4444";
                 perks.delete[team] = false;
                 document.getElementById(`delete-p${team+1}`).classList.add('used');
                 playSnd(150, 0.5);
-                alert("تم حذف خانة 500 نقطة بنجاح!");
+                alert("تم حذف خانة 500 نقطة!");
             }
         } else {
-            alert("عذراً! خاصية الحذف متاحة فقط للفريق المتقدم في النقاط حالياً.");
+            alert("خاصية الحذف للمتصدر فقط!");
         }
     } else if(type === 'mute') {
-        alert("تنبيه: سيتم تسكيت الفريق الخصم في هذا السؤال!");
+        alert("تم تفعيل التسكيت للفريق الخصم!");
         perks.mute[team] = false;
         document.getElementById(`mute-p${team+1}`).classList.add('used');
-        playSnd(300, 0.2);
     }
 }
 
 function usePowerUp(t) {
-    if(t === 'double') { activeMult = 2; alert("تضاعفت النقاط!"); }
+    if(t === 'double') { activeMult = 2; alert("النقاط تدبلت!"); }
     if(t === 'wheel') {
         const res = [0, 0.5, 1, 1.5, 2, 3][Math.floor(Math.random()*6)];
         const resDiv = document.getElementById('wheel-result');
         resDiv.classList.remove('hidden');
-        resDiv.className = 'wheel-animation';
-        resDiv.innerText = "جاري التدوير... النتيجة: x" + res;
+        resDiv.innerText = "النتيجة: x" + res;
         activeMult = res;
-        playSnd(800, 0.1);
     }
 }
 
