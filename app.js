@@ -1,4 +1,4 @@
-// 1. بنك الأسئلة الشامل (250 سؤال)
+// بنك الأسئلة الشامل (10 أقسام - 250 سؤال)
 const questionsBank = {
     "قرآن": [
         { q: "ما هي أطول سورة في القرآن الكريم؟", a: "سورة البقرة", v: 100 },
@@ -125,7 +125,7 @@ const questionsBank = {
         { q: "من القائل: 'متى استعبدتم الناس وقد ولدتهم أمهاتهم أحراراً؟'", a: "عمر بن الخطاب", v: 300 },
         { q: "من القائل: 'إِذا رَأَيْتَ نُيُوبَ اللّيْثِ بارِزَةً..'؟", a: "المتنبي", v: 300 },
         { q: "من القائل: 'أعز مكان في الدنى سرج سابح'؟", a: "المتنبي", v: 400 },
-        { q: "من القائل: 'ستبدي لك الأيام ما كنت جاهلاً'? ", a: "طرفة بن العبد", v: 400 },
+        { q: "من القائل: 'ستبدي لك الأيام ما كنت جاهلاً'؟", a: "طرفة بن العبد", v: 400 },
         { q: "من القائل: 'كل ابن أنثى وإن طالت سلامته..'؟", a: "كعب بن زهير", v: 400 },
         { q: "من القائل: 'يا صاحبي تقصيا نظريكما..'؟", a: "أبو تمام", v: 400 },
         { q: "من القائل: 'ذو العَقلِ يَشقَى في النّعيمِ بعَقْلِهِ'؟", a: "المتنبي", v: 400 },
@@ -272,161 +272,110 @@ const questionsBank = {
     ]
 };
 
-// 2. نظام الصوت المطور
+// --- نظام الصوت ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playSnd(type) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+function playSnd(f, d, t="sine") { const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type=t; o.frequency.value=f; g.gain.value=0.1; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+d); }
 
-    if (type === 'correct') {
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(523, audioCtx.currentTime);
-        oscillator.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.3);
-    } else if (type === 'wrong') {
-        oscillator.type = 'sawtooth';
-        oscillator.frequency.setValueAtTime(110, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.4);
-    } else if (type === 'open') {
-        oscillator.type = 'triangle';
-        oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.1);
-    }
-}
-
-// 3. متغيرات اللعبة
+// --- متغيرات اللعبة ---
 let scores = [0, 0];
 let currentTurn = 0;
-let usedCategories = [];
 let perks = { mute: [true, true], delete: [true, true] };
 let activeCard, activeVal, activeGenre, activeMult = 1, isStolenMode = false;
-let deletedCount = 0;
 
-// 4. الدوال الرئيسية
-function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
+// --- وظائف المنيو والواجهة ---
+function toggleMenu() {
+    document.getElementById('side-menu').classList.toggle('active');
+}
+
+function showInstructions() {
+    alert("التعليمات:\n1. اختر 5 أقسام.\n2. الفريق المضيء يختار السؤال.\n3. التسكيت والحذف لمرة واحدة.\n4. عند الخطأ، يقرر الخصم هل يسرق أم لا.");
+}
 
 function showCategorySelection() {
     document.getElementById('start-screen').classList.add('hidden');
-    document.getElementById('main-game').classList.add('hidden');
     document.getElementById('category-selection-screen').classList.remove('hidden');
-    
-    // إظهار خاصية الحذف إذا كنا في جولة ثانية
-    if (usedCategories.length > 0) {
-        document.getElementById('delete-perk-area').classList.remove('hidden');
-        const winner = scores[0] >= scores[1] ? "الأول" : "الثاني";
-        document.getElementById('winner-msg').innerText = `الفريق المتصدر: ${winner} (له حق الحذف)`;
-    }
-
     const list = document.getElementById('categories-list');
     list.innerHTML = '';
     let selected = [];
-    
     Object.keys(questionsBank).forEach(cat => {
         const div = document.createElement('div');
         div.className = 'category-item';
-        if (usedCategories.includes(cat)) {
-            div.classList.add('played');
-            div.innerText = cat + " (تم لعبها)";
-        } else {
-            div.innerText = cat;
-            div.onclick = () => {
-                if(selected.includes(cat)) selected = selected.filter(c => c!==cat);
-                else if(selected.length < 5) selected.push(cat);
-                document.getElementById('selected-count').innerText = selected.length;
-                document.getElementById('start-round-btn').disabled = selected.length !== 5;
-                Array.from(list.children).forEach(c => {
-                    if(!c.classList.contains('played'))
-                        c.classList.toggle('selected', selected.includes(c.innerText));
-                });
-            };
-        }
+        div.innerText = cat;
+        div.onclick = () => {
+            if(selected.includes(cat)) selected = selected.filter(c => c!==cat);
+            else if(selected.length < 5) selected.push(cat);
+            document.getElementById('selected-count').innerText = selected.length;
+            document.getElementById('start-round-btn').disabled = selected.length !== 5;
+            Array.from(list.children).forEach(c => c.classList.toggle('selected', selected.includes(c.innerText)));
+        };
         list.appendChild(div);
     });
     window.selectedCats = selected;
 }
 
-function applyDeletePerk() {
-    if (deletedCount < 3) {
-        deletedCount = 3;
-        alert("تم تفعيل حذف 3 أسئلة (500) عشوائياً في الجولة القادمة!");
-        document.getElementById('btn-apply-delete').disabled = true;
-    }
-}
-
 function confirmCategories() {
-    usedCategories.push(...window.selectedCats);
     document.getElementById('category-selection-screen').classList.add('hidden');
     document.getElementById('main-game').classList.remove('hidden');
-    renderBoard();
-}
-
-function renderBoard() {
     const board = document.getElementById('game-board');
     board.innerHTML = '';
     window.selectedCats.forEach(cat => {
         const col = document.createElement('div');
         col.className = 'genre-column';
         col.innerHTML = `<div class="genre-title">${cat}</div>`;
-        
-        let questions = [100, 200, 300, 400, 500];
-        questions.forEach(v => {
+        [100, 200, 300, 400, 500].forEach(v => {
             const card = document.createElement('div');
-            card.className = 'card';
-            card.innerText = v;
-            
-            // تطبيق الحذف العشوائي لخانة 500
-            if (v === 500 && deletedCount > 0 && Math.random() > 0.4) {
-                card.classList.add('disabled');
-                card.innerText = "❌";
-                deletedCount--; 
-            } else {
-                card.onclick = () => openQuestion(cat, v, card);
-            }
+            card.className = 'card'; card.innerText = v;
+            card.onclick = () => openQuestion(cat, v, card);
             col.appendChild(card);
         });
         board.appendChild(col);
     });
+    updateUI();
 }
 
+// --- منطق السؤال والسرقة ---
 function openQuestion(cat, v, card) {
-    playSnd('open');
+    if(card.classList.contains('disabled')) return;
     activeCard = card; activeVal = v; activeGenre = cat; activeMult = 1; isStolenMode = false;
+    
     document.getElementById('modal-genre').innerText = cat + " - " + v;
     let q = questionsBank[cat].find(x => x.v === v);
     document.getElementById('modal-question-text').innerText = q.q;
     document.getElementById('modal-answer').innerText = q.a;
     
     document.getElementById('modal-answer').classList.add('hidden');
-    document.getElementById('decision-section').classList.remove('hidden');
+    document.getElementById('decision-section').classList.add('hidden');
     document.getElementById('steal-section').classList.add('hidden');
-    document.getElementById('btn-reveal').classList.add('hidden');
+    document.getElementById('wheel-result').classList.add('hidden');
+    document.getElementById('btn-reveal').classList.remove('hidden');
+    document.getElementById('power-ups-section').classList.remove('hidden');
     document.getElementById('question-modal').classList.remove('hidden');
+    playSnd(440, 0.1);
+}
+
+function revealAnswer() {
+    document.getElementById('modal-answer').classList.remove('hidden');
+    document.getElementById('decision-section').classList.remove('hidden');
+    document.getElementById('btn-reveal').classList.add('hidden');
+    document.getElementById('power-ups-section').classList.add('hidden');
 }
 
 function handleResult(isCorrect) {
     let p = Math.floor(activeVal * activeMult);
     if(isCorrect) {
-        playSnd('correct');
         scores[currentTurn] += p;
-        document.getElementById('modal-answer').classList.remove('hidden');
-        document.getElementById('decision-section').classList.add('hidden');
-        setTimeout(finalize, 2000);
+        playSnd(600, 0.2);
+        finalize();
     } else {
-        playSnd('wrong');
         scores[currentTurn] -= p;
+        playSnd(200, 0.3, "sawtooth");
         if(!isStolenMode) {
+            // إخفاء الجواب وأزرار التحكم وإظهار خيار السرقة
             document.getElementById('decision-section').classList.add('hidden');
+            document.getElementById('modal-answer').classList.add('hidden');
             document.getElementById('steal-section').classList.remove('hidden');
         } else {
-            document.getElementById('modal-answer').classList.remove('hidden');
-            document.getElementById('decision-section').classList.add('hidden');
-            setTimeout(finalize, 2000);
+            finalize();
         }
     }
     updateUI();
@@ -435,8 +384,9 @@ function handleResult(isCorrect) {
 function handleSteal(wantsToSteal) {
     document.getElementById('steal-section').classList.add('hidden');
     if(wantsToSteal) {
-        currentTurn = (currentTurn === 0) ? 1 : 0;
+        currentTurn = (currentTurn === 0) ? 1 : 0; // تغيير الدور للفريق الآخر
         isStolenMode = true;
+        document.getElementById('modal-answer').classList.add('hidden');
         document.getElementById('decision-section').classList.remove('hidden');
         updateUI();
     } else {
@@ -445,20 +395,50 @@ function handleSteal(wantsToSteal) {
     }
 }
 
+// --- منطق الخصائص (Perks) ---
 function usePerk(type, team) {
     if(!perks[type][team]) return;
-    if(type === 'mute') {
-        alert("تم تسكيت الفريق الخصم للجولة القادمة!");
+
+    if(type === 'delete') {
+        const winner = scores[0] >= scores[1] ? 0 : 1;
+        if(team === winner) {
+            const allCards = Array.from(document.querySelectorAll('.card:not(.disabled)'));
+            const hardCards = allCards.filter(c => c.innerText === "500");
+            
+            if(hardCards.length > 0) {
+                const target = hardCards[Math.floor(Math.random() * hardCards.length)];
+                target.classList.add('disabled');
+                target.innerText = "❌";
+                target.style.backgroundColor = "#ef4444";
+                perks.delete[team] = false;
+                document.getElementById(`delete-p${team+1}`).classList.add('used');
+                playSnd(150, 0.5);
+                alert("تم حذف خانة 500 نقطة!");
+            }
+        } else {
+            alert("خاصية الحذف للمتصدر فقط!");
+        }
+    } else if(type === 'mute') {
+        alert("تم تفعيل التسكيت للفريق الخصم!");
         perks.mute[team] = false;
-        const btn = document.getElementById(`mute-p${team+1}`);
-        btn.disabled = true;
-        btn.classList.add('used');
+        document.getElementById(`mute-p${team+1}`).classList.add('used');
+    }
+}
+
+function usePowerUp(t) {
+    if(t === 'double') { activeMult = 2; alert("النقاط تدبلت!"); }
+    if(t === 'wheel') {
+        const res = [0, 0.5, 1, 1.5, 2, 3][Math.floor(Math.random()*6)];
+        const resDiv = document.getElementById('wheel-result');
+        resDiv.classList.remove('hidden');
+        resDiv.innerText = "النتيجة: x" + res;
+        activeMult = res;
     }
 }
 
 function finalize() {
     activeCard.classList.add('disabled');
-    activeCard.onclick = null;
+    activeCard.innerText = "✔";
     document.getElementById('question-modal').classList.add('hidden');
     currentTurn = (currentTurn === 0) ? 1 : 0;
     updateUI();
@@ -471,5 +451,9 @@ function updateUI() {
     document.getElementById('team2-box').classList.toggle('active', currentTurn === 1);
 }
 
-// البدء عند الضغط على أي مكان لتفعيل الصوت
-document.body.addEventListener('click', () => { if (audioCtx.state === 'suspended') audioCtx.resume(); }, {once: true});
+function changeQuestion() {
+    let qArr = questionsBank[activeGenre].filter(x => x.v === activeVal);
+    let newQ = qArr[Math.floor(Math.random()*qArr.length)];
+    document.getElementById('modal-question-text').innerText = newQ.q;
+    document.getElementById('modal-answer').innerText = newQ.a;
+}
